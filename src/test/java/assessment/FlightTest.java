@@ -1,7 +1,5 @@
-package assessmentOne;
+package assessment;
 
-import assessment.one.Airplane;
-import assessment.one.Flight;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.sql.Timestamp;

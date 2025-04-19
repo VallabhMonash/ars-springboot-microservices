@@ -1,4 +1,4 @@
-package assessment.one;
+package assessment;
 
 public abstract class Person //abstract class Person
 {

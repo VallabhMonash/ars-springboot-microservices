@@ -1,4 +1,4 @@
-package assessment.one;
+package assessment;
 
 import java.util.ArrayList;
 

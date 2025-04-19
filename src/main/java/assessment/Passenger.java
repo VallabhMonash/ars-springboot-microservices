@@ -1,4 +1,4 @@
-package assessment.one;
+package assessment;
 
 public class Passenger extends Person {
     private String email;

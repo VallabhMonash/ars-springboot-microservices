@@ -1,8 +1,5 @@
-package assessmentOne;
+package assessment;
 
-import assessment.one.Airplane;
-import assessment.one.Flight;
-import assessment.one.FlightCollection;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +17,6 @@ public class FlightCollectionTest
     private Flight flightTwo;
     private Flight flightThree;
     private Flight flightFour;
-    private FlightCollection flightCollection;
 
     /**
      * Sets up test data before each test execution.
