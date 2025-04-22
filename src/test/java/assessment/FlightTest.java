@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for validating Flight and Airplane initialization and functionality {@link Flight}.
