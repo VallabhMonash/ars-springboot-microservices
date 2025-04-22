@@ -19,14 +19,49 @@ public class Flight {
 
     public Flight(int flight_id, String departTo, String departFrom, String code, String company, Timestamp dateFrom,Timestamp dateTo, Airplane airplane)
     {
-            this.flightID=flight_id;
-            this.departTo = departTo;
-            this.departFrom = departFrom;
-            this.code = code;
-            this.company = company;
-            this.airplane = airplane;
-            this.dateTo = dateTo;
-            this.dateFrom = dateFrom;
+        if (flight_id == 0 || departFrom == null || departTo == null || code == null || company == null || airplane == null || dateFrom == null || dateTo == null)
+        {
+            throw new IllegalArgumentException("All fields are required");
+        }
+
+        // Date format checker
+        String fmtFrom = dateFrom.toString().split(" ")[0].trim();
+        String fmtTo   = dateTo.toString().split(" ")[0].trim();
+
+        if (!fmtFrom.matches("\\d{4}-\\d{2}-\\d{2}") || !fmtTo  .matches("\\d{4}-\\d{2}-\\d{2}"))
+        {
+            throw new IllegalArgumentException("Date must be in YYYY-MM-DD format");
+        }
+
+        // Time format checker
+        String timeFrom = dateFrom.toString().split(" ")[1].split("\\.")[0].trim();
+        String timeTo   = dateTo.toString().split(" ")[1].split("\\.")[0].trim();
+
+        if (!timeFrom.matches("\\d{2}:\\d{2}:\\d{2}")
+                || !timeTo  .matches("\\d{2}:\\d{2}:\\d{2}"))
+        {
+            throw new IllegalArgumentException("Time must be in HH:MM:SS format");
+        }
+
+        //check if flight exists in the system
+        if (FlightCollection.getFlights() != null)
+        {
+            for(Flight flight : FlightCollection.getFlights()) {
+                if (flight_id == flight.getFlightID()) {
+                    throw new IllegalArgumentException("Flight Already in the system");
+                }
+            }
+        }
+
+
+        this.flightID=flight_id;
+        this.departTo = departTo;
+        this.departFrom = departFrom;
+        this.code = code;
+        this.company = company;
+        this.airplane = airplane;
+        this.dateTo = dateTo;
+        this.dateFrom = dateFrom;
     }
 
     public int getFlightID()
