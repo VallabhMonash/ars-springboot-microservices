@@ -14,7 +14,7 @@ public abstract class Person //abstract class Person
 
     public Person(String firstName, String secondName, int age, String gender)
     {
-        if (firstName == null || secondName == null || age == 0 || gender == null)
+        if (firstName == null || secondName == null || age <= 0 || gender == null)
         {
             throw new IllegalArgumentException("All fields are required");
         }
