@@ -5,9 +5,9 @@ import java.util.regex.PatternSyntaxException;
 
 public class TicketSystem
 {
-   private Passenger passenger;
-   private Ticket ticket;
-   private Flight flight;
+   Passenger passenger;
+   Ticket ticket;
+   Flight flight;
 
     public TicketSystem()
     {
