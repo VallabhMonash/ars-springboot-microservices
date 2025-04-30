@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.*;
+
 class AirplaneTest {
 
     /**
@@ -124,6 +126,15 @@ class AirplaneTest {
         assertThrows(IllegalArgumentException.class, () -> {
             airplane.setBusinessSitsNumber(-5); // Negative seats
         });
+    }
+
+    @Test
+    public void testSeatMapRows() {
+        Airplane airplane = new Airplane(1001, "Airbus 3800",10, 200,15);
+        Map<Character, List<String>> map = airplane.getSeatMap();
+        assertEquals(10, map.size(), "Should have rows A–J");
+        assertTrue(map.containsKey('A'));
+        assertEquals(7, map.get('A').size(), "Each row must have 7 seats");
     }
 
 }

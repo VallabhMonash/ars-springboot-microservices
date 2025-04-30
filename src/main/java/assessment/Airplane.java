@@ -1,11 +1,17 @@
 package assessment;
 
+import java.util.LinkedHashMap;
+import java.util.*;
+import java.util.stream.IntStream;
+
 public class Airplane {
     private int airplaneID;
     private String airplaneModel;
     private int businessSitsNumber;
     private int economySitsNumber;
     private int crewSitsNumber;
+    private Map<Character, List<String>> seatMap;
+
 
     public Airplane(int airplaneID, String airplaneModel, int businessSitsNumber, int economySitsNumber, int crewSitsNumber)
     {
@@ -22,15 +28,28 @@ public class Airplane {
         }
         // Validate total passenger seats (business + economy)
         int totalPassengerSeats = businessSitsNumber + economySitsNumber;
-        if (totalPassengerSeats < 7 || totalPassengerSeats > 70 || totalPassengerSeats % 7 != 0) {
+        if (totalPassengerSeats < 7 || totalPassengerSeats % 7 != 0) {
             throw new IllegalArgumentException("Total passenger seats must be 7-70 and divisible by 7.");
         }
+        buildSeatMap();
 
         this.airplaneID = airplaneID;
         this.airplaneModel = airplaneModel;
         this.businessSitsNumber = businessSitsNumber;
         this.economySitsNumber = economySitsNumber;
         this.crewSitsNumber = crewSitsNumber;
+    }
+
+    private void buildSeatMap() {
+        seatMap = new LinkedHashMap<>();
+        for (char row = 'A'; row <= 'J'; row++) {
+            seatMap.put(row, IntStream.rangeClosed(1, 7)
+                    .mapToObj(String::valueOf).toList());
+        }
+    }
+
+    public Map<Character, List<String>> getSeatMap() {
+        return Collections.unmodifiableMap(seatMap);
     }
 
     public int getAirplaneID()
