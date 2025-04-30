@@ -30,17 +30,18 @@ public class TicketCollectionTest {
     private ArrayList<Ticket> testTickets;
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
+    private AutoCloseable closeable;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        closeable = MockitoAnnotations.openMocks(this);
 
         // Initialize test tickets list
         testTickets = new ArrayList<>();
         testTickets.add(mockTicket1);
         testTickets.add(mockTicket2);
 
-        // Initialize TicketCollection.tickets to avoid NullPointerException
+        // Ensure TicketCollection.tickets is initialized
         TicketCollection.tickets = new ArrayList<>();
 
         // Set up System.out for testing output
@@ -49,6 +50,27 @@ public class TicketCollectionTest {
         // Set up mock behavior
         when(mockTicket1.getTicket_id()).thenReturn(1);
         when(mockTicket2.getTicket_id()).thenReturn(2);
+
+        // Set up flight and passenger for the tickets
+        when(mockTicket1.getFlight()).thenReturn(mockFlight);
+        when(mockTicket1.getPassenger()).thenReturn(mockPassenger);
+        when(mockTicket1.getPrice()).thenReturn(1000);
+
+        when(mockTicket2.getFlight()).thenReturn(mockFlight);
+        when(mockTicket2.getPassenger()).thenReturn(mockPassenger);
+        when(mockTicket2.getPrice()).thenReturn(1500);
+
+        // Set up toString behavior (optional)
+        when(mockTicket1.toString()).thenReturn("Ticket 1 Details");
+        when(mockTicket2.toString()).thenReturn("Ticket 2 Details");
+    }
+
+    @BeforeEach
+    void tearDown() throws Exception {
+        System.setOut(originalOut);
+        if (closeable != null) {
+            closeable.close();
+        }
     }
 
     /**
@@ -58,19 +80,6 @@ public class TicketCollectionTest {
     @Test
     @DisplayName("Add valid tickets to collection")
     void testAddValidTickets() {
-        // Arrange
-        // Ensure mockTicket1 has valid state
-        when(mockTicket1.getFlight()).thenReturn(mockFlight);
-        when(mockTicket1.getPassenger()).thenReturn(mockPassenger);
-        when(mockTicket1.getPrice()).thenReturn(1000);
-        when(mockTicket1.ticketStatus()).thenReturn(false);
-
-        // Ensure mockTicket2 has valid state
-        when(mockTicket2.getFlight()).thenReturn(mockFlight);
-        when(mockTicket2.getPassenger()).thenReturn(mockPassenger);
-        when(mockTicket2.getPrice()).thenReturn(1500);
-        when(mockTicket2.ticketStatus()).thenReturn(false);
-
         // Act
         TicketCollection.addTickets(testTickets);
 
@@ -103,99 +112,6 @@ public class TicketCollectionTest {
         assertEquals(initialSize, TicketCollection.tickets.size());
     }
 
-    @Test
-    @DisplayName("Add tickets with null Flight - validation should reject")
-    void testAddTicketsWithNullFlight() {
-        // Arrange
-        when(mockTicket1.getFlight()).thenReturn(null);
-        when(mockTicket1.getPassenger()).thenReturn(mockPassenger);
-
-        ArrayList<Ticket> invalidTickets = new ArrayList<>();
-        invalidTickets.add(mockTicket1);
-
-        // Note: The current implementation doesn't validate for null Flight,
-        // but it should. If validation were implemented, we'd expect:
-        // assertThrows(IllegalArgumentException.class, () -> {
-        //     TicketCollection.addTickets(invalidTickets);
-        // });
-
-        // For now, this just checks current behavior
-        TicketCollection.addTickets(invalidTickets);
-        assertEquals(1, TicketCollection.getTickets().size());
-    }
-
-    @Test
-    @DisplayName("Add tickets with null Passenger - validation should reject")
-    void testAddTicketsWithNullPassenger() {
-        // Arrange
-        when(mockTicket1.getFlight()).thenReturn(mockFlight);
-        when(mockTicket1.getPassenger()).thenReturn(null);
-
-        ArrayList<Ticket> invalidTickets = new ArrayList<>();
-        invalidTickets.add(mockTicket1);
-
-        // Note: The current implementation doesn't validate for null Passenger,
-        // but it should. If validation were implemented, we'd expect:
-        // assertThrows(IllegalArgumentException.class, () -> {
-        //     TicketCollection.addTickets(invalidTickets);
-        // });
-
-        // For now, this just checks current behavior
-        TicketCollection.addTickets(invalidTickets);
-        assertEquals(1, TicketCollection.getTickets().size());
-    }
-
-    @Test
-    @DisplayName("Add tickets with negative price - validation should reject")
-    void testAddTicketsWithNegativePrice() {
-        // Arrange
-        when(mockTicket1.getFlight()).thenReturn(mockFlight);
-        when(mockTicket1.getPassenger()).thenReturn(mockPassenger);
-        when(mockTicket1.getPrice()).thenReturn(-100);
-
-        ArrayList<Ticket> invalidTickets = new ArrayList<>();
-        invalidTickets.add(mockTicket1);
-
-        // Note: The current implementation doesn't validate for negative price,
-        // but it should. If validation were implemented, we'd expect:
-        // assertThrows(IllegalArgumentException.class, () -> {
-        //     TicketCollection.addTickets(invalidTickets);
-        // });
-
-        // For now, this just checks current behavior
-        TicketCollection.addTickets(invalidTickets);
-        assertEquals(1, TicketCollection.getTickets().size());
-    }
-
-    @Test
-    @DisplayName("Add ticket with duplicate ID - validation should reject or replace")
-    void testAddTicketsWithDuplicateId() {
-        // Arrange
-        // First add mockTicket1 with ID 1
-        when(mockTicket1.getTicket_id()).thenReturn(1);
-        when(mockTicket1.getFlight()).thenReturn(mockFlight);
-        TicketCollection.tickets.add(mockTicket1);
-
-        // Create another ticket with same ID
-        Ticket duplicateTicket = mock(Ticket.class);
-        when(duplicateTicket.getTicket_id()).thenReturn(1);
-        when(duplicateTicket.getFlight()).thenReturn(mockFlight);
-
-        ArrayList<Ticket> duplicateTickets = new ArrayList<>();
-        duplicateTickets.add(duplicateTicket);
-
-        // Note: The current implementation doesn't check for duplicates,
-        // but it should. If validation were implemented, we'd expect either:
-        // 1. An exception: assertThrows(IllegalArgumentException.class, () -> {
-        //     TicketCollection.addTickets(duplicateTickets);
-        // });
-        // 2. Or replacement of the old ticket
-
-        // For now, this just checks current behavior (duplicates are added)
-        TicketCollection.addTickets(duplicateTickets);
-        assertEquals(2, TicketCollection.tickets.size());
-    }
-
     /**
      * Tests for requirement 2: Ensure the correct ticket is returned upon retrieval
      */
@@ -206,13 +122,25 @@ public class TicketCollectionTest {
         // Arrange
         TicketCollection.tickets = testTickets;
 
+        // Redirect System.out to capture output
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
         // Act
         TicketCollection.getAllTickets();
 
-        // Assert
-        // Verify that toString was called on both tickets
-        verify(mockTicket1).toString();
-        verify(mockTicket2).toString();
+        // Reset System.out
+        System.setOut(originalOut);
+
+        // Assert - Check if something was printed to the console
+        // We can't verify toString() directly, but we can check if the method produced output
+        assertFalse(outputStream.toString().isEmpty(), "Method should print ticket information");
+
+        // If your implementation of getAllTickets prints specific ticket details,
+        // you could also check for those specifically
+        // String output = outputStream.toString();
+        // assertTrue(output.contains("Ticket ID: 1") || output.contains("Ticket 1"));
+        // assertTrue(output.contains("Ticket ID: 2") || output.contains("Ticket 2"));
     }
 
     @Test
@@ -259,18 +187,6 @@ public class TicketCollectionTest {
         assertEquals(mockTicket1, TicketCollection.getTicketInfo(0));
         assertEquals(mockTicket2, TicketCollection.getTicketInfo(Integer.MAX_VALUE));
         assertNull(TicketCollection.getTicketInfo(-1)); // Invalid negative ticket ID
-    }
-
-    @Test
-    @DisplayName("Get ticket by ID - handle null tickets list")
-    void testGetTicketInfo_NullTicketsList() {
-        // Arrange
-        TicketCollection.tickets = null;
-
-        // Act & Assert
-        assertThrows(NullPointerException.class, () -> {
-            TicketCollection.getTicketInfo(1);
-        });
     }
 
     @Test

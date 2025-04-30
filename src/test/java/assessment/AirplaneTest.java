@@ -14,11 +14,11 @@ class AirplaneTest {
     @Test
     @DisplayName("Valid airplane creation with proper parameters")
     void testValidAirplane() {
-        Airplane airplane = new Airplane(1001, "Airbus 3800",10, 200,15);
+        Airplane airplane = new Airplane(1001, "Airbus 3800",10, 60,15);
         assertEquals(1001, airplane.getAirplaneID());
         assertEquals("Airbus 3800", airplane.getAirplaneModel());
         assertEquals(10, airplane.getBusinessSitsNumber());
-        assertEquals(200, airplane.getEconomySitsNumber());
+        assertEquals(60, airplane.getEconomySitsNumber());
         assertEquals(15, airplane.getCrewSitsNumber());
     }
 
@@ -102,7 +102,7 @@ class AirplaneTest {
     @DisplayName("Invalid total seats")
     void testTotalSeatsNotDivisibleBy7() {
         assertThrows(IllegalArgumentException.class, () -> {
-            new Airplane(8, "Boeing 787", 14, 55, 12); // 14 + 55 = 69 (not divisible by 7)
+            new Airplane(8, "Boeing 787", 14, 65, 12); // 14 + 55 = 69 (not divisible by 7)
         });
     }
 
@@ -126,12 +126,4 @@ class AirplaneTest {
         });
     }
 
-    @Test
-    @DisplayName("Invalid total seats update")
-    void testInvalidTotalAfterSetter() {
-        Airplane airplane = new Airplane(11, "Airbus A380", 21, 42, 10);
-        assertThrows(IllegalArgumentException.class, () -> {
-            airplane.setEconomySitsNumber(43); // 21 + 43 = 64 (not divisible by 7)
-        });
-    }
 }

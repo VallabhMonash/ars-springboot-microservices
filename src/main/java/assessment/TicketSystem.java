@@ -5,15 +5,24 @@ import java.util.regex.PatternSyntaxException;
 
 public class TicketSystem
 {
-   Passenger passenger;
-   Ticket ticket;
-   Flight flight;
+    Passenger passenger;
+    Ticket ticket;
+    Flight flight;
+
+    // Scanner as an instance variable for easier testing
+    private Scanner scanner;
 
     public TicketSystem()
     {
-       this.passenger = new Passenger();
-       this.ticket = new Ticket();
-       this.flight = new Flight();
+        this.passenger = new Passenger();
+        this.ticket = new Ticket();
+        this.flight = new Flight();
+        this.scanner = new Scanner(System.in);
+    }
+
+    // For testing purposes
+    public void setScanner(Scanner scanner) {
+        this.scanner = scanner;
     }
 
     public void showTicket()
@@ -32,56 +41,67 @@ public class TicketSystem
     // Buy ticket with direct Flight
     public void buyTicket(int ticket_id) throws Exception
     {
-        Scanner in = new Scanner(System.in);
         int flight_id = 0;
 
         //select ticket where ticket_id="+ticket_id"
         Ticket validTicket = TicketCollection.getTicketInfo(ticket_id);
 
         //if there is a valid ticket id was input then we buy it, otherwise show message
-        if(validTicket != null)
+        if(validTicket == null)
         {
             System.out.println("This ticket does not exist.");
             return;
         }
         else{
+            // Check if ticket is already booked
+            if (validTicket.ticketStatus()) {
+                System.out.println("This ticket is already booked.");
+                return;
+            }
+
             //select flight_id from ticket where ticket_id=" + ticket_id
+            // Add null check for flight to avoid NullPointerException
+            if (validTicket.getFlight() == null) {
+                System.out.println("This ticket has no associated flight.");
+                return;
+            }
+
             flight_id = validTicket.getFlight().getFlightID();
 
             try
             {
                 System.out.println("Enter your First Name: ");
-                String firstName = "";
+                String firstName = scanner.nextLine();
                 passenger.setFirstName(firstName);
 
                 System.out.println("Enter your Second name:");
-                String secondName = "";
+                String secondName = scanner.nextLine();
                 passenger.setSecondName(secondName); //setting passengers info
 
                 System.out.println("Enter your age:");
-                Integer age = 0;
-                in.nextLine();
+                Integer age = Integer.parseInt(scanner.nextLine());
                 passenger.setAge(age);
 
                 System.out.println("Enter your gender: ");
-                String gender = "";
+                String gender = scanner.nextLine();
                 passenger.setGender(gender);
 
                 System.out.println("Enter your e-mail address");
-                String email = "";
+                String email = scanner.nextLine();
                 passenger.setEmail(email);
 
                 System.out.println("Enter your phone number (+7):");
-                String phoneNumber = "";
+                String phoneNumber = scanner.nextLine();
                 passenger.setPhoneNumber(phoneNumber);
 
                 System.out.println("Enter your passport number:");
-                String passportNumber = "";
+                String passportNumber = scanner.nextLine();
                 passenger.setPassport(passportNumber);
 
                 System.out.println("Do you want to purchase?\n 1-YES 0-NO");
 
-                int purch = in.nextInt();
+                int purch = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
 
                 if (purch == 0)
                 {
@@ -89,12 +109,28 @@ public class TicketSystem
                 }
                 else
                 {
-
                     flight = FlightCollection.getFlightInfo(flight_id);
+
+                    // Add null checks for flight and airplane
+                    if (flight == null) {
+                        System.out.println("Flight information not found.");
+                        return;
+                    }
+
+                    if (flight.getAirplane() == null) {
+                        System.out.println("Airplane information not found.");
+                        return;
+                    }
 
                     int airplane_id = flight.getAirplane().getAirplaneID();
 
                     Airplane airplane = Airplane.getAirPlaneInfo(airplane_id);
+
+                    // Add null check for airplane
+                    if (airplane == null) {
+                        System.out.println("Airplane details not found.");
+                        return;
+                    }
 
                     ticket = TicketCollection.getTicketInfo(ticket_id);
 
@@ -116,13 +152,12 @@ public class TicketSystem
                 System.out.println("Your bill: " + ticket.getPrice() + "\n");
 
                 System.out.println("Enter your card number:");
-                String cardNumber = "";
+                String cardNumber = scanner.next();
                 passenger.setCardNumber(cardNumber);
 
                 System.out.println("Enter your security code:");
-                Integer securityCode = 0;
+                Integer securityCode = scanner.nextInt();
                 passenger.setSecurityCode(securityCode);
-
 
             } catch (PatternSyntaxException patternException)
             {
@@ -133,91 +168,115 @@ public class TicketSystem
 
     public void buyTicket(int ticket_id_first, int ticket_id_second) throws Exception
     {
-        Scanner in = new Scanner(System.in);
         //method for buying two tickets with transfer flight
 
         int flight_id_first = 0;
-
         int flight_id_second = 0;
-
 
         System.out.println(ticket_id_first + " " + ticket_id_second);
 
         Ticket validTicketfirst = TicketCollection.getTicketInfo(ticket_id_first);
-
-        Ticket validTicketSecond = TicketCollection.getTicketInfo(ticket_id_first);
-
+        Ticket validTicketSecond = TicketCollection.getTicketInfo(ticket_id_second);
 
         System.out.println("Processing...");
 
         //if there is a valid ticket id was input then we buy it, otherwise show message
-
-        if(validTicketfirst!=null || validTicketSecond!=null)
+        if(validTicketfirst == null || validTicketSecond == null)
         {
             System.out.println("This ticket does not exist.");
             return;
         }
-
         else
         {
+            // Check if tickets are already booked
+            if (validTicketfirst.ticketStatus() || validTicketSecond.ticketStatus()) {
+                System.out.println("One of the tickets is already booked.");
+                return;
+            }
+
+            // Add null check for flights
+            if (validTicketfirst.getFlight() == null || validTicketSecond.getFlight() == null) {
+                System.out.println("One of the tickets has no associated flight.");
+                return;
+            }
+
             flight_id_first = validTicketfirst.getFlight().getFlightID();
-
-            flight_id_second = validTicketfirst.getFlight().getFlightID();
-
+            flight_id_second = validTicketSecond.getFlight().getFlightID();
 
             try
             {
                 System.out.println("Enter your First Name: ");
-                String firstName = "";
+                String firstName = scanner.nextLine();
                 passenger.setFirstName(firstName);
 
-
                 System.out.println("Enter your Second name:");
-                String secondName = "";
+                String secondName = scanner.nextLine();
                 passenger.setSecondName(secondName); //setting passengers info
 
                 System.out.println("Enter your age:");
-                Integer age = 0;
-                in.nextLine();
+                Integer age = Integer.parseInt(scanner.nextLine());
                 passenger.setAge(age);
 
                 System.out.println("Enter your gender: ");
-                String gender = "";
-                //passenger.setGender(gender));
+                String gender = scanner.nextLine();
+                passenger.setGender(gender);
 
                 System.out.println("Enter your e-mail address");
-                String email = "";
+                String email = scanner.nextLine();
                 passenger.setEmail(email);
 
                 System.out.println("Enter your phone number (+7):");
-                String phoneNumber = "";
+                String phoneNumber = scanner.nextLine();
                 passenger.setPhoneNumber(phoneNumber);
 
                 System.out.println("Enter your passport number:");
-                String passportNumber = "";
+                String passportNumber = scanner.nextLine();
                 passenger.setPassport(passportNumber);
 
                 System.out.println("Do you want to purchase?\n 1-YES 0-NO");
-                int purch = in.nextInt();
+                int purch = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+
                 if (purch == 0)
                 {
                     return;
                 }
                 else
                 {
-
                     //  "select * from flight, airplane where flight_id=" + flight_id_first + " and flight.airplane_id=airplane.airplane_id");
                     Flight flight_first = FlightCollection.getFlightInfo(flight_id_first);
+
+                    // Add null checks
+                    if (flight_first == null || flight_first.getAirplane() == null) {
+                        System.out.println("Flight or airplane information not found for first flight.");
+                        return;
+                    }
 
                     int airplane_id_first = flight_first.getAirplane().getAirplaneID();
 
                     Airplane airplane_first = Airplane.getAirPlaneInfo(airplane_id_first);
 
+                    if (airplane_first == null) {
+                        System.out.println("Airplane details not found for first flight.");
+                        return;
+                    }
+
                     Flight flight_second = FlightCollection.getFlightInfo(flight_id_second);
+
+                    // Add null checks
+                    if (flight_second == null || flight_second.getAirplane() == null) {
+                        System.out.println("Flight or airplane information not found for second flight.");
+                        return;
+                    }
 
                     int airplane_id_second = flight_second.getAirplane().getAirplaneID();
 
-                    Airplane airpairplane_second  = Airplane.getAirPlaneInfo(airplane_id_second);
+                    Airplane airpairplane_second = Airplane.getAirPlaneInfo(airplane_id_second);
+
+                    if (airpairplane_second == null) {
+                        System.out.println("Airplane details not found for second flight.");
+                        return;
+                    }
 
                     Ticket ticket_first = TicketCollection.getTicketInfo(ticket_id_first);
 
@@ -242,7 +301,7 @@ public class TicketSystem
 
                     ticket_second.setPassenger(passenger);
                     ticket_second.setTicket_id(ticket_id_second);
-                    ticket_second.setFlight(flight_first);
+                    ticket_second.setFlight(flight_second);
                     ticket_second.setPrice(ticket_second.getPrice());
                     ticket_second.setClassVip(ticket_second.getClassVip());
                     ticket_second.setTicketStatus(true);
@@ -262,13 +321,12 @@ public class TicketSystem
 
                     System.out.println("Enter your card number:");
 
-                    String cardNumber = "";
+                    String cardNumber = scanner.next();
                     passenger.setCardNumber(cardNumber);
 
                     System.out.println("Enter your security code:");
-                    Integer securityCode = 0;
+                    Integer securityCode = scanner.nextInt();
                     passenger.setSecurityCode(securityCode);
-
                 }
             } catch (PatternSyntaxException patternException)
             {
@@ -279,28 +337,43 @@ public class TicketSystem
 
     // Method for choosing a ticket based on cities
     public void chooseTicket(String city1, String city2) throws Exception {
+        // Validate city names
+        if (city1 == null || city1.isEmpty() || city2 == null || city2.isEmpty()) {
+            throw new IllegalArgumentException("City names cannot be empty");
+        }
+
+        if (!city1.matches("[a-zA-Z ]+") || !city2.matches("[a-zA-Z ]+")) {
+            throw new IllegalArgumentException("City names must only contain letters and spaces");
+        }
+
         int counter = 1;
         int idFirst = 0;
         int idSecond = 0;
         Flight flight = FlightCollection.getFlightInfo(city1, city2);
 
-        Scanner in = new Scanner(System.in);
-
         if (flight != null) {
             TicketCollection.getAllTickets();
             System.out.println("\nEnter ID of ticket you want to choose:");
-            int ticket_id = in.nextInt();
-            in.nextLine();
+            int ticket_id = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
             buyTicket(ticket_id);
         } else {
             // When there is no direct flight
             Flight depart_to = FlightCollection.getFlightInfo(city2);
+            if (depart_to == null) {
+                System.out.println("No flights found to destination: " + city2);
+                return;
+            }
+
             String connectCity = depart_to.getDepartFrom();
             Flight flightConnectingTwoCities = FlightCollection.getFlightInfo(city1, connectCity);
             if (flightConnectingTwoCities != null) {
                 System.out.println("There is a special way to go there. And it is a transfer flight, like above. Way №" + counter);
                 idFirst = depart_to.getFlightID();
                 idSecond = flightConnectingTwoCities.getFlightID();
+            } else {
+                System.out.println("No connecting flights found.");
+                return;
             }
             counter++;
             buyTicket(idFirst, idSecond);

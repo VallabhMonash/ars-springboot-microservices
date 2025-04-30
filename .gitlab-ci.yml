@@ -20,7 +20,8 @@ stages:
 validate:
   stage: validate
   script:
-    - mvn $MAVEN_CLI_OPTS validate
+    - mvn $MAVEN_CLI_OPTS clean validate
+  allow_failure: false
 
 # Compile the project
 compile:

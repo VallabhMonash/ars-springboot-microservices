@@ -9,19 +9,30 @@ public class Ticket
     private boolean status; //indicates status of ticket: if it is bought by someone or not
     Passenger passenger;
 
-    public Ticket(int ticket_id,int price, Flight flight, boolean classVip, Passenger passenger)
+    public Ticket(int ticket_id, int price, Flight flight, boolean classVip, Passenger passenger)
     {
-        this.ticket_id=ticket_id;
+        // Validate flight and passenger
+        if (flight == null) {
+            throw new IllegalArgumentException("Flight cannot be null");
+        }
+        if (passenger == null) {
+            throw new IllegalArgumentException("Passenger cannot be null");
+        }
+        // Validate price
+        if (price < 0) {
+            throw new IllegalArgumentException("Price cannot be negative");
+        }
+
+        this.ticket_id = ticket_id;
         this.price = price;
         this.flight = flight;
         this.classVip = classVip;
         this.status = false;
-        this.passenger=passenger;
+        this.passenger = passenger;
     }
 
     public Ticket()
     {
-
 
     }
 
@@ -42,9 +53,14 @@ public class Ticket
 
     public void setPrice(int price)
     {
+        // Validate price
+        if (price < 0) {
+            throw new IllegalArgumentException("Price cannot be negative");
+        }
+
         this.price = price;
         saleByAge(passenger.getAge()); //changes price of the ticket according to the age category of passenger
-        serviceTax( ); //changes price by adding service tax to the ticket
+        serviceTax(); //changes price by adding service tax to the ticket
     }
 
     public void saleByAge(int age)
@@ -52,11 +68,11 @@ public class Ticket
         int price = getPrice();
         if(age < 15)
         {
-            price-=(int)price*0.5;//50% sale for children under 15
-            this.price=price;
+            price-=(int)(price*0.5);//50% sale for children under 15
+            this.price = price;
 
         } else if(age>=60){
-            this.price=0; //100% sale for elder people
+            this.price = 0; //100% sale for elder people
         }
     }
 
@@ -65,6 +81,9 @@ public class Ticket
     }
 
     public void setFlight(Flight flight) {
+        if (flight == null) {
+            throw new IllegalArgumentException("Flight cannot be null");
+        }
         this.flight = flight;
     }
 
@@ -87,7 +106,7 @@ public class Ticket
     }
 
     public void serviceTax(){
-        this.price *= 1.12;
+        this.price = (int)(this.price * 1.12);
     } //12% service tax
 
     public Passenger getPassenger() {
@@ -95,6 +114,9 @@ public class Ticket
     }
 
     public void setPassenger(Passenger passenger) {
+        if (passenger == null) {
+            throw new IllegalArgumentException("Passenger cannot be null");
+        }
         this.passenger = passenger;
     }
 
