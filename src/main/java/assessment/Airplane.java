@@ -28,7 +28,7 @@ public class Airplane {
         }
         // Validate total passenger seats (business + economy)
         int totalPassengerSeats = businessSitsNumber + economySitsNumber;
-        if (totalPassengerSeats < 7 || totalPassengerSeats % 7 != 0) {
+        if (totalPassengerSeats < 7 || totalPassengerSeats > 70 || totalPassengerSeats % 7 != 0) {
             throw new IllegalArgumentException("Total passenger seats must be 7-70 and divisible by 7.");
         }
         buildSeatMap();
