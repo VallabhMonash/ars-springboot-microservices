@@ -1,59 +1,67 @@
-# Use Maven with Java 21 as the default image
-image: maven:3.9-openjdk-21
+image: maven:latest
 
-# Define tags to target your custom runner
-default:
-  tags:
-    - java
-    - maven
-
-# Cache dependencies between builds to speed up execution
+# Cache dependencies between builds
 cache:
-  key: ${CI_COMMIT_REF_SLUG}
   paths:
     - .m2/repository/
-    - target/
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true"
 
-# Simplified pipeline with just 2 stages
 stages:
-  - build
+  - validate
+  - compile
+  - test
+  - verify
   - deploy
 
-# Build stage - compile, test and verify code
-build:
-  stage: build
+# Validate the project structure
+validate:
+  stage: validate
   script:
-    - echo "Starting build process..."
-    - mvn $MAVEN_CLI_OPTS clean compile test verify
-    - echo "Build complete."
+    - mvn $MAVEN_CLI_OPTS clean validate
+  allow_failure: false
+
+# Compile the project
+compile:
+  stage: compile
+  script:
+    - mvn $MAVEN_CLI_OPTS compile
   artifacts:
     paths:
-      - target/*.jar
+      - target/
+
+# Run all tests
+test:
+  stage: test
+  script:
+    - mvn $MAVEN_CLI_OPTS test
+  artifacts:
+    paths:
       - target/surefire-reports/
     reports:
       junit: target/surefire-reports/TEST-*.xml
-    expire_in: 1 week
 
-# Deploy stage - package and deploy the application
-deploy:
+# Run integration tests and verify
+integration_test:
+  stage: verify
+  script:
+    - mvn $MAVEN_CLI_OPTS verify
+  artifacts:
+    paths:
+      - target/failsafe-reports/
+    reports:
+      junit: target/failsafe-reports/TEST-*.xml
+  allow_failure: true  # Allow failure until integration tests are implemented
+
+# Package the application
+package:
   stage: deploy
   script:
-    - echo "Creating package for deployment..."
     - mvn $MAVEN_CLI_OPTS package -DskipTests
-    - echo "Package created."
-    # Add deployment commands here if needed
-    # For example: 
-    # - scp target/*.jar user@your-server:/path/to/deployment/
-    # - ssh user@your-server 'systemctl restart your-service'
   artifacts:
     paths:
       - target/*.jar
-    expire_in: 1 month
   only:
     - main
-    - tags
-  when: manual  # Makes this job manual to give you control over when to deploy
