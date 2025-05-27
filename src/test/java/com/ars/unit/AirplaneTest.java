@@ -67,7 +67,7 @@ public class AirplaneTest {
 
 
     @Test
-    public void testValidGetSeatAssignments()
+    public void testValidSeatsAssignments()
     {
         // Given
         int businessSeats = 10;
@@ -94,7 +94,7 @@ public class AirplaneTest {
     }
 
     @Test
-    public void constructor_throwsWhenTotalSeatsNot70() {
+    public void testInValidSeatAssignments() {
         // business + economy + crew = 10 + 10 + 10 = 30 ≠ 70
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
