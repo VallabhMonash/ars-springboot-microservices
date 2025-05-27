@@ -1,8 +1,17 @@
 package com.ars.unit;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
-public class Flight {
+public class Flight
+{
+    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm:ss");
+
     private int flightID;
     private String departTo;
     private String departFrom;
@@ -33,6 +42,10 @@ public class Flight {
         if (airplane == null)
             throw new IllegalArgumentException("Airplane is required");
 
+        // --- parse & validate format ---
+        //this.dateFrom = parseTimestamp(departDate,  departTime,  "Departure");
+        //this.dateTo   = parseTimestamp(arrivalDate, arrivalTime, "Arrival");
+
         this.flightID=flight_id;
         this.departTo = departTo;
         this.departFrom = departFrom;
@@ -41,6 +54,21 @@ public class Flight {
         this.airplane = airplane;
         this.dateTo = dateTo;
         this.dateFrom = dateFrom;
+    }
+
+    private static Timestamp parseTimestamp(String dateStr, String timeStr, String fieldName) {
+        try
+        {
+            LocalDate d = LocalDate .parse(dateStr, DATE_FMT);
+            LocalTime t = LocalTime .parse(timeStr, TIME_FMT);
+            return Timestamp.valueOf(LocalDateTime.of(d, t));
+        }
+        catch (DateTimeParseException ex)
+        {
+            throw new IllegalArgumentException(
+                    fieldName + " must be in formats YYYY-MM-DD and HH:MM:SS; got '"
+                            + dateStr + " " + timeStr + "'", ex);
+        }
     }
 
     public int getFlightID() {
