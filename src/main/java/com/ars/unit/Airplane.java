@@ -21,6 +21,16 @@ public class Airplane {
         if (airplaneModel == null || airplaneModel.isEmpty())
             throw new IllegalArgumentException("Model cannot be null or empty.");
 
+        int totalSits = businessSitsNumber + economySitsNumber + crewSitsNumber;
+        int maxSeats  = ('J' - 'A' + 1) * 7;  // 10 rows × 7 seats = 70
+
+        if (totalSits != maxSeats) {
+            throw new IllegalArgumentException(
+                    "Total seats must be exactly " + maxSeats +
+                            " (10 rows A–J × 7 seats each); got " + totalSits
+            );
+        }
+
         this.airplaneID = airplaneID;
         this.airplaneModel = airplaneModel;
         this.businessSitsNumber = businessSitsNumber;
@@ -32,27 +42,29 @@ public class Airplane {
     private Map<String, String> initializeSeatAssignments() {
         Map<String, String> assignments = new HashMap<>();
         int totalSits = businessSitsNumber + economySitsNumber + crewSitsNumber;
-        int assigned = 0;
 
-        for (char row = 'A'; row <= 'J'; row++) {
-            boolean flag = false;
-            for (int seat = 1; seat <= 7; seat++) {
-                String key = row + String.valueOf(seat);
-                if (assigned < businessSitsNumber) {
-                    assignments.put(key, "business");
-                } else if (assigned < businessSitsNumber + economySitsNumber) {
-                    assignments.put(key, "economy");
-                } else if (assigned < totalSits) {
-                    assignments.put(key, "crew");
-                } else {
-                    flag = true;
-                    break;
-                }
-                if (flag)
-                    break;
-                assigned++;
+        // Loop exactly totalSits times, mapping each index to a row/seat
+        for (int i = 0; i < totalSits; i++)
+        {
+            // Row letter: 0–6 → 'A', 7–13 → 'B', etc.
+            char row = (char) ('A' + (i / 7));
+            // Seat number within row: 0→1, 1→2, …, 6→7
+            int seatNo = (i % 7) + 1;
+            String key = "" + row + seatNo;
+
+            // Determine class type by threshold
+            String type;
+            if (i < businessSitsNumber) {
+                type = "business";
+            } else if (i < businessSitsNumber + economySitsNumber) {
+                type = "economy";
+            } else {
+                type = "crew";
             }
+
+            assignments.put(key, type);
         }
+
         return assignments;
     }
 
@@ -76,29 +88,34 @@ public class Airplane {
         this.airplaneModel = airplaneModel;
     }
 
-    public int getBusinessSitsNumber() {
+    public int getBusinessSitsNumber()
+    {
         return businessSitsNumber;
     }
 
-    public void setBusinessSitsNumber(int businessSitsNumber) {
+    public void setBusinessSitsNumber(int businessSitsNumber)
+    {
         if (businessSitsNumber < 0 || economySitsNumber <= 0 || crewSitsNumber <= 0)
             throw new IllegalArgumentException("Seat counts must be non-negative.");
         this.businessSitsNumber = businessSitsNumber;
         this.seatAssignments = initializeSeatAssignments();
     }
 
-    public int getEconomySitsNumber() {
+    public int getEconomySitsNumber()
+    {
         return economySitsNumber;
     }
 
-    public void setEconomySitsNumber(int economSitsNumber) {
+    public void setEconomySitsNumber(int economySitsNumber)
+    {
         if (economySitsNumber <= 0)
             throw new IllegalArgumentException("Seat counts must be non-negative.");
-        this.economySitsNumber = economSitsNumber;
+        this.economySitsNumber = economySitsNumber;
         this.seatAssignments = initializeSeatAssignments();
     }
 
-    public int getCrewSitsNumber() {
+    public int getCrewSitsNumber()
+    {
         return crewSitsNumber;
     }
 
@@ -109,7 +126,8 @@ public class Airplane {
         this.seatAssignments = initializeSeatAssignments();
     }
 
-    public Map<String, String> getSeatAssignments() {
+    public Map<String, String> getSeatAssignments()
+    {
         return seatAssignments;
     }
 

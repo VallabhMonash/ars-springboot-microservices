@@ -67,11 +67,12 @@ public class AirplaneTest {
 
 
     @Test
-    public void testGetSeatAssignments() {
+    public void testValidGetSeatAssignments()
+    {
         // Given
         int businessSeats = 10;
-        int economySeats = 30;
-        int crewSeats = 5;
+        int economySeats = 50;
+        int crewSeats = 10;
         Airplane airplane = new Airplane(1, "Boeing 737", businessSeats, economySeats, crewSeats);
 
         // When
@@ -90,5 +91,18 @@ public class AirplaneTest {
         assertEquals(businessSeats, businessCount, "Business seat count should match.");
         assertEquals(economySeats, economyCount, "Economy seat count should match.");
         assertEquals(crewSeats, crewCount, "Crew seat count should match.");
+    }
+
+    @Test
+    public void constructor_throwsWhenTotalSeatsNot70() {
+        // business + economy + crew = 10 + 10 + 10 = 30 ≠ 70
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> new Airplane(1, "TestModel", 10, 10, 10)
+        );
+        assertTrue(
+                ex.getMessage().contains("Total seats must be exactly 70"),
+                "Expected exception message to mention 70 seats"
+        );
     }
 }
