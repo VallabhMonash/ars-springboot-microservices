@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.ars.unit.Airplane;
 import com.ars.unit.Flight;
+import com.ars.unit.Flight.FlightSchedule;
 import com.ars.unit.Passenger;
 import com.ars.unit.Ticket;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,9 +27,17 @@ class TicketPassengerIntegrationTest {
 
         Airplane airplane = new Airplane(1, "Boeing 737", 10, 100, 5);
 
+        Timestamp dateFrom = Timestamp.valueOf("2025-06-01 08:00:00");
+        Timestamp dateTo   = Timestamp.valueOf("2025-06-01 10:00:00");
+        FlightSchedule schedule = new FlightSchedule(dateFrom, dateTo);
+
         flight = new Flight(
-                1, "Melbourne", "Sydney", "FL123", "Qantas",
-                Timestamp.valueOf("2025-06-01 08:00:00"), Timestamp.valueOf("2025-06-01 10:00:00"),
+                1,
+                "Melbourne",
+                "Sydney",
+                "FL123",
+                "Qantas",
+                schedule,
                 airplane
         );
     }
@@ -55,10 +64,8 @@ class TicketPassengerIntegrationTest {
 
         Ticket childTicket = new Ticket(102, 500, flight, false, childPassenger);
 
-        // The child fare should be 500 * 0.5 multiplied by 1.12 service tax
         double expectedPrice = 500 * 0.5 * 1.12;
-
-        assertEquals((int)expectedPrice, childTicket.getPrice(), "Child fare calculation error");
+        assertEquals((int) expectedPrice, childTicket.getPrice(), "Child fare calculation error");
     }
 
     @Test
@@ -70,9 +77,6 @@ class TicketPassengerIntegrationTest {
         );
 
         Ticket seniorTicket = new Ticket(103, 800, flight, false, seniorPassenger);
-
-        // Senior fare should be 0
         assertEquals(0, seniorTicket.getPrice(), "Senior fare is 0");
     }
-
 }

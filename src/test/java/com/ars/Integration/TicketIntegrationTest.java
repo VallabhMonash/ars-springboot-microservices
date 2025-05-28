@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-
 public class TicketIntegrationTest {
 
     private Airplane airplane;
@@ -19,18 +18,43 @@ public class TicketIntegrationTest {
 
     @BeforeEach
     public void setup() {
+        // Reset collections
+        TicketCollection.tickets.clear();
+
+        // Create airplane
         airplane = new Airplane(1, "G", 10, 1, 20);
 
+        // Wrap departure and arrival into FlightSchedule
         Timestamp dateFrom = Timestamp.valueOf("2025-06-01 10:00:00");
-        Timestamp dateTo = Timestamp.valueOf("2025-06-01 14:00:00");
+        Timestamp dateTo   = Timestamp.valueOf("2025-06-01 14:00:00");
+        Flight.FlightSchedule schedule = new Flight.FlightSchedule(dateFrom, dateTo);
 
-        flight = new Flight(1, "Tokyo", "Sydney", "JL123", "Japan Airlines", dateFrom, dateTo, airplane);
+        // Create flight with new constructor
+        flight = new Flight(
+                1,
+                "Tokyo",
+                "Sydney",
+                "JL123",
+                "Japan Airlines",
+                schedule,
+                airplane
+        );
 
-        passenger = new Passenger("Alice", "Wonder", 30, "Man", "alice@mail.com",
-                "0412345678", "G12345678", "1234567890123456", 123);
+        // Create passenger
+        passenger = new Passenger(
+                "Alice",
+                "Wonder",
+                30,
+                "Man",
+                "alice@mail.com",
+                "0412345678",
+                "G12345678",
+                "1234567890123456",
+                123
+        );
 
+        // Create ticket
         ticket = new Ticket(101, 1000, flight, true, passenger);
-        TicketCollection.tickets.clear();
     }
 
     @Test
@@ -45,9 +69,9 @@ public class TicketIntegrationTest {
     @Test
     public void testFlightFields() {
         assertEquals(1, flight.getFlightID());
-        assertEquals("Tokyo", flight.getDepartTo());
-        assertEquals("Sydney", flight.getDepartFrom());
-        assertEquals("JL123", flight.getCode());
+        assertEquals("Tokyo",   flight.getDepartTo());
+        assertEquals("Sydney",  flight.getDepartFrom());
+        assertEquals("JL123",   flight.getCode());
         assertEquals("Japan Airlines", flight.getCompany());
         assertEquals(Timestamp.valueOf("2025-06-01 10:00:00"), flight.getDateFrom());
         assertEquals(Timestamp.valueOf("2025-06-01 14:00:00"), flight.getDateTo());
@@ -56,13 +80,13 @@ public class TicketIntegrationTest {
 
     @Test
     public void testPassengerFields() {
-        assertEquals("Alice", passenger.getFirstName());
-        assertEquals("Wonder", passenger.getSecondName());
-        assertEquals(30, passenger.getAge());
-        assertEquals("Man", passenger.getGender());
+        assertEquals("Alice",     passenger.getFirstName());
+        assertEquals("Wonder",    passenger.getSecondName());
+        assertEquals(30,            passenger.getAge());
+        assertEquals("Man",       passenger.getGender());
         assertEquals("alice@mail.com", passenger.getEmail());
-        assertEquals("+61412345678", passenger.getPhoneNumber());
-        assertEquals("G12345678", passenger.getPassport());
+        assertEquals("+61412345678",   passenger.getPhoneNumber());
+        assertEquals("G12345678",      passenger.getPassport());
         assertEquals("1234567890123456", passenger.getCardNumber());
         assertEquals(123, passenger.getSecurityCode());
     }
@@ -78,14 +102,20 @@ public class TicketIntegrationTest {
 
     @Test
     public void testTicketPriceCalculationWithServiceTaxAndSale() {
-        Passenger child = new Passenger("Tom", "Kid", 10, "Man", "tom@mail.com",
-                "0412345678", "E12345678", "9876543210123456", 123);
+        Passenger child = new Passenger(
+                "Tom", "Kid", 10, "Man",
+                "tom@mail.com", "0412345678",
+                "E12345678", "9876543210123456", 123
+        );
         Ticket childTicket = new Ticket(102, 1000, flight, false, child);
         // price should be 1000 -> 500 after age discount -> 560 after tax
         assertEquals(560, childTicket.getPrice());
 
-        Passenger elder = new Passenger("Elder", "Lee", 70, "Woman", "elder@mail.com",
-                "0412345678", "E12345678", "9876543210123456", 123);
+        Passenger elder = new Passenger(
+                "Elder", "Lee", 70, "Woman",
+                "elder@mail.com", "0412345678",
+                "E12345678", "9876543210123456", 123
+        );
         Ticket elderTicket = new Ticket(103, 1000, flight, false, elder);
         // price should be 0 -> 0 after tax
         assertEquals(0, elderTicket.getPrice());
@@ -116,9 +146,10 @@ public class TicketIntegrationTest {
         duplicateBatch.add(ticket);
         duplicateBatch.add(ticket); // same ID
 
-        Exception exception = assertThrows(IllegalStateException.class, () -> {
-            TicketCollection.addTickets(duplicateBatch);
-        });
+        Exception exception = assertThrows(
+                IllegalStateException.class,
+                () -> TicketCollection.addTickets(duplicateBatch)
+        );
 
         assertTrue(exception.getMessage().contains("Duplicate ticket ID"));
     }

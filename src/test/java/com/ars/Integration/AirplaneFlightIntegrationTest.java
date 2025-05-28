@@ -12,42 +12,45 @@ public class AirplaneFlightIntegrationTest {
 
     @Test
     public void testAirplaneInjectedIntoFlightCorrectly() {
-        // Creating a Real Airplane Object
+        // 1) create an Airplane
         Airplane airplane = new Airplane(101, "A320", 12, 150, 6);
 
-        // Create departure and arrival times
+        // 2) create departure and arrival times
         Timestamp from = Timestamp.valueOf("2025-04-30 08:00:00");
-        Timestamp to = Timestamp.valueOf("2025-04-30 12:00:00");
+        Timestamp to   = Timestamp.valueOf("2025-04-30 12:00:00");
 
-        // Create a real Flight object and inject Airplane
+        // 3) wrap them in a FlightSchedule
+        Flight.FlightSchedule schedule = new Flight.FlightSchedule(from, to);
+
+        // 4) now call the new constructor signature
         Flight flight = new Flight(
                 1,
                 "Sydney",
                 "Melbourne",
                 "QF123",
                 "Qantas",
-                from,
-                to,
+                schedule,
                 airplane
         );
 
-        // Verify that the Airplane in Flight is saved correctly
+        // 5) assertions remain the same
         assertNotNull(flight.getAirplane());
         assertEquals(airplane, flight.getAirplane());
-
-        // Validate fields such as departure/arrival city, flight number, etc.
         assertEquals("Melbourne", flight.getDepartFrom());
-        assertEquals("Sydney", flight.getDepartTo());
-        assertEquals("QF123", flight.getCode());
-        assertEquals("Qantas", flight.getCompany());
-        assertEquals(from, flight.getDateFrom());
-        assertEquals(to, flight.getDateTo());
+        assertEquals("Sydney",   flight.getDepartTo());
+        assertEquals("QF123",    flight.getCode());
+        assertEquals("Qantas",   flight.getCompany());
+        assertEquals(from,       flight.getDateFrom());
+        assertEquals(to,         flight.getDateTo());
     }
 
     @Test
     public void testFlightCreationFailsWithNullAirplane() {
         Timestamp from = Timestamp.valueOf("2025-04-30 08:00:00");
-        Timestamp to = Timestamp.valueOf("2025-04-30 12:00:00");
+        Timestamp to   = Timestamp.valueOf("2025-04-30 12:00:00");
+
+        // still need a valid schedule even if airplane is null
+        Flight.FlightSchedule schedule = new Flight.FlightSchedule(from, to);
 
         assertThrows(IllegalArgumentException.class, () -> {
             new Flight(
@@ -56,9 +59,8 @@ public class AirplaneFlightIntegrationTest {
                     "Shanghai",
                     "CA888",
                     "AirChina",
-                    from,
-                    to,
-                    null // null airplane
+                    schedule,
+                    null  // null airplane
             );
         });
     }
