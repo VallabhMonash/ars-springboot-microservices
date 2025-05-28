@@ -1,20 +1,24 @@
 package com.ars.unit;
-import java.util.Set;
 
-public abstract class Person //abstract class Person
-{
+public abstract class Person {
     private String firstName;
     private String secondName;
     private int age;
     private String gender;
 
-    public Person(){}
+    /**
+     * Protected no-arg constructor for subclasses.
+     */
+    protected Person() { }
 
-    public Person(String firstName, String secondName, int age, String gender){
-        this.age=age;
-        this.firstName=firstName;
-        this.secondName=secondName;
-        this.gender=gender;
+    /**
+     * Protected constructor initializing all fields.
+     */
+    protected Person(String firstName, String secondName, int age, String gender) {
+        this.age = age;
+        this.firstName = firstName;
+        this.secondName = secondName;
+        this.gender = gender;
     }
 
     public int getAge() {
@@ -41,27 +45,24 @@ public abstract class Person //abstract class Person
         return firstName;
     }
 
-    public String getSecondName() {
-        return secondName;
-    }
-
     public void setFirstName(String firstName) {
         if (firstName == null || firstName.isEmpty()) {
             throw new IllegalArgumentException("First name cannot be null or empty.");
         }
-
         if (!Character.isLetter(firstName.charAt(0))) {
             throw new IllegalArgumentException("First name must start with a letter.");
         }
         this.firstName = firstName;
     }
 
-    public void setSecondName(String secondName) {
+    public String getSecondName() {
+        return secondName;
+    }
 
+    public void setSecondName(String secondName) {
         if (secondName == null || secondName.isEmpty()) {
             throw new IllegalArgumentException("Second name cannot be null or empty.");
         }
-
         if (!Character.isLetter(secondName.charAt(0))) {
             throw new IllegalArgumentException("Second name must start with a letter.");
         }
@@ -69,8 +70,7 @@ public abstract class Person //abstract class Person
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Person{" +
                 "firstName='" + firstName + '\'' +
                 ", secondName='" + secondName + '\'' +
