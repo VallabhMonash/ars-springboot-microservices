@@ -90,7 +90,6 @@
                     <mutators>
                         <mutator>DEFAULTS</mutator>
                     </mutators>
-<!--                    <testPlugin>junit5</testPlugin>-->
                     <outputFormats>
                         <outputFormat>HTML</outputFormat>
                     </outputFormats>
