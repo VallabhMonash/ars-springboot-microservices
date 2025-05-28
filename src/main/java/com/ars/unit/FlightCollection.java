@@ -2,18 +2,22 @@ package com.ars.unit;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class FlightCollection {
 
-	public static ArrayList<Flight> flights = new ArrayList<>();
+	public static List<Flight> flights = new ArrayList<>();
 
 
-	public static ArrayList<Flight> getFlights() {
+	private FlightCollection() {}
+
+	public static List<Flight> getFlights()
+	{
 		return flights;
 	}
 
-	public static void addFlights(ArrayList<Flight> newFlights) {
+	public static void addFlights(List<Flight> newFlights) {
 		Set<String> existingFlightKeys = new HashSet<>();
 		for (Flight flight : flights) {
 			existingFlightKeys.add(flight.getCode() + "_" + flight.getDateFrom());
@@ -25,7 +29,6 @@ public class FlightCollection {
 				flights.add(flight);
 				existingFlightKeys.add(flightKey);
 			} else {
-				// System.out.println("Duplicate flight skipped: " + flight.getCode());
 				throw new IllegalArgumentException("Duplicate flight skipped: " + flight.getCode());
 			}
 		}
@@ -53,9 +56,9 @@ public class FlightCollection {
 		return null;
 	}
 
-	public static Flight getFlightInfo(int flight_id) {
+	public static Flight getFlightInfo(int flightID) {
 		for (Flight flight : flights) {
-			if (flight.getFlightID() == flight_id) {
+			if (flight.getFlightID() == flightID) {
 				return flight;
 			}
 		}
