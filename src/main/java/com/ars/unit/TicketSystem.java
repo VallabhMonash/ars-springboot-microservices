@@ -40,7 +40,7 @@ public class TicketSystem {
         validTicket.setPassenger(passenger);
         validTicket.setTicketStatus(true);
 
-        if (validTicket.getClassVip()) {
+        if (validTicket.isClassVip()) {
             airplane.setBusinessSitsNumber(airplane.getBusinessSitsNumber() - 1);
         } else {
             airplane.setEconomySitsNumber(airplane.getEconomySitsNumber() - 1);
@@ -56,7 +56,7 @@ public class TicketSystem {
             // If there is a direct flight, find an unbooked ticket on a direct flight
             Ticket ticket = findAvailableTicketForFlight(flight.getFlightID());
             if (ticket != null) {
-                buyTicket(ticket.getTicket_id(), passenger);
+                buyTicket(ticket.getTicketId(), passenger);
             } else {
                 System.out.println("No available tickets for direct flight.");
             }
@@ -78,8 +78,8 @@ public class TicketSystem {
                     Ticket secondTicket = findAvailableTicketForFlight(flightConnectingTwoCities.getFlightID());
 
                     if (firstTicket != null && secondTicket != null) {
-                        buyTicket(firstTicket.getTicket_id(), passenger);
-                        buyTicket(secondTicket.getTicket_id(), passenger);
+                        buyTicket(firstTicket.getTicketId(), passenger);
+                        buyTicket(secondTicket.getTicketId(), passenger);
                     } else {
                         System.out.println("No available tickets for transfer flights.");
                     }

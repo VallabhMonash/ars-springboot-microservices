@@ -14,7 +14,7 @@ public class TicketCollection {
         for (Ticket t : tickets_db) {
             if (t == null) throw new IllegalArgumentException("Ticket cannot be null");
             if (tickets.contains(t)) {
-                throw new IllegalStateException("Duplicate ticket ID: " + t.getTicket_id());
+                throw new IllegalStateException("Duplicate ticket ID: " + t.getTicketId());
             }
             tickets.add(t);
         }
@@ -27,7 +27,7 @@ public class TicketCollection {
 
     public static Ticket getTicketInfo(int ticket_id) {
         for (Ticket t : tickets) {
-            if (t.getTicket_id() == ticket_id) {
+            if (t.getTicketId() == ticket_id) {
                 return t;
             }
         }

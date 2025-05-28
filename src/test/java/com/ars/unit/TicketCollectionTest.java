@@ -21,8 +21,8 @@ class TicketCollectionTest {
         validTicket1 = Mockito.mock(Ticket.class);
         validTicket2 = Mockito.mock(Ticket.class);
 
-        when(validTicket1.getTicket_id()).thenReturn(1001);
-        when(validTicket2.getTicket_id()).thenReturn(1002);
+        when(validTicket1.getTicketId()).thenReturn(1001);
+        when(validTicket2.getTicketId()).thenReturn(1002);
     }
 
     @Test // TC1: Validate ticket added successfully
