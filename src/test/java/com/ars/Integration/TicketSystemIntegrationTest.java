@@ -71,7 +71,7 @@ public class TicketSystemIntegrationTest {
     @Test
     public void testBuyTicketAlreadyBooked() {
         ticket.setTicketStatus(true);
-        ticketSystem.buyTicket(ticket.getTicket_id(), passenger);
+        ticketSystem.buyTicket(ticket.getTicketId(), passenger);
         assertNull(ticket.getPassenger());
     }
 

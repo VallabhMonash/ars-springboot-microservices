@@ -67,7 +67,7 @@ public class TicketSystemTest {
             when(mockAirplane.getAirplaneID()).thenReturn(200); // mock airplane_id
 
             // Ticket
-            when(mockTicket.getClassVip()).thenReturn(false);
+            when(mockTicket.isClassVip()).thenReturn(false);
             when(mockTicket.getPrice()).thenReturn(1000);
 
             ticketSystem.buyTicket(1, mockPassenger);
@@ -133,12 +133,12 @@ public class TicketSystemTest {
         Ticket t1 = mock(Ticket.class);
         when(t1.getFlight()).thenReturn(departTo);
         when(t1.ticketStatus()).thenReturn(false);
-        when(t1.getTicket_id()).thenReturn(1000);
+        when(t1.getTicketId()).thenReturn(1000);
 
         Ticket t2 = mock(Ticket.class);
         when(t2.getFlight()).thenReturn(connectFlight);
         when(t2.ticketStatus()).thenReturn(false);
-        when(t2.getTicket_id()).thenReturn(2000);
+        when(t2.getTicketId()).thenReturn(2000);
 
         // Ensuring type matching with ArrayList
         ArrayList<Ticket> tickets = new ArrayList<>();

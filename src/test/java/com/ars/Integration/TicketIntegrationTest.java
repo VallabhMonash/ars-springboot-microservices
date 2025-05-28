@@ -78,10 +78,10 @@ public class TicketIntegrationTest {
 
     @Test
     public void testTicketCreation() {
-        assertEquals(101, ticket.getTicket_id());
+        assertEquals(101, ticket.getTicketId());
         assertEquals(flight, ticket.getFlight());
         assertEquals(passenger, ticket.getPassenger());
-        assertTrue(ticket.getClassVip());
+        assertTrue(ticket.isClassVip());
         assertFalse(ticket.ticketStatus());
     }
 
