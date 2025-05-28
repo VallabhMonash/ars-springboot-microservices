@@ -1,5 +1,4 @@
 package com.ars.unit;
-import java.util.Set;
 
 public abstract class Person //abstract class Person
 {
