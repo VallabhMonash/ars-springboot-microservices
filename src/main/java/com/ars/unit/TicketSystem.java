@@ -1,39 +1,45 @@
 package com.ars.unit;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class TicketSystem {
 
-    public void buyTicket(int ticket_id, Passenger passenger) {
-        Ticket validTicket = TicketCollection.getTicketInfo(ticket_id);
+    private static final Logger logger = Logger.getLogger(TicketSystem.class.getName());
+
+    public void buyTicket(int ticketID, Passenger passenger) {
+        Ticket validTicket = TicketCollection.getTicketInfo(ticketID);
 
         if (passenger.getEmail() == null) {
-            System.out.println("Invalid passenger info.");
+            logger.log(Level.WARNING, "Invalid passenger info: email is null");
             return;
         }
-
 
         if (validTicket == null) {
-            System.out.println("This ticket does not exist.");
+            logger.log(Level.WARNING, "This ticket does not exist.");
             return;
         }
+
 
         if (validTicket.ticketStatus()) {
-            System.out.println("Ticket is already booked.");
+            logger.log(Level.WARNING, "Ticket is already booked.");
             return;
         }
 
-        int flight_id = validTicket.getFlight().getFlightID();
-        Flight flight = FlightCollection.getFlightInfo(flight_id);
+
+        int flightID = validTicket.getFlight().getFlightID();
+        Flight flight = FlightCollection.getFlightInfo(flightID);
+
         if (flight == null) {
-            System.out.println("No flight associated with this ticket.");
+            logger.log(Level.WARNING, "No flight associated with this ticket.");
             return;
         }
 
-        int airplane_id = flight.getAirplane().getAirplaneID();
+        int airplaneID = flight.getAirplane().getAirplaneID();
 
-        Airplane airplane = Airplane.getAirPlaneInfo(airplane_id);
+        Airplane airplane = Airplane.getAirPlaneInfo(airplaneID);
 
         if (airplane == null) {
-            System.out.println("No airplane associated with this ticket.");
+            logger.log(Level.WARNING, "No airplane associated with this ticket.");
             return;
         }
 
@@ -46,7 +52,7 @@ public class TicketSystem {
             airplane.setEconomySitsNumber(airplane.getEconomySitsNumber() - 1);
         }
 
-        System.out.println("Your bill: " + validTicket.getPrice());
+        logger.log(Level.INFO, "Your bill: {0}", validTicket.getPrice());
     }
 
     public void chooseTicket(String city1, String city2, Passenger passenger) {
@@ -58,23 +64,23 @@ public class TicketSystem {
             if (ticket != null) {
                 buyTicket(ticket.getTicketId(), passenger);
             } else {
-                System.out.println("No available tickets for direct flight.");
+                logger.log(Level.INFO, "No available tickets for direct flight.");
             }
         } else {
             int counter = 0;
 
             // No direct flight, find a connecting flight
-            Flight depart_to = FlightCollection.getFlightInfo(city2);
+            Flight departTo = FlightCollection.getFlightInfo(city2);
 
-            if (depart_to != null) {
-                String connectCity = depart_to.getDepartFrom();
+            if (departTo != null) {
+                String connectCity = departTo.getDepartFrom();
 
                 Flight flightConnectingTwoCities = FlightCollection.getFlightInfo(city1, connectCity);
 
                 if (flightConnectingTwoCities != null) {
                     System.out.println("There is special way to go there. And it is transfer way, like above. Way №" + counter);
 
-                    Ticket firstTicket = findAvailableTicketForFlight(depart_to.getFlightID());
+                    Ticket firstTicket = findAvailableTicketForFlight(departTo.getFlightID());
                     Ticket secondTicket = findAvailableTicketForFlight(flightConnectingTwoCities.getFlightID());
 
                     if (firstTicket != null && secondTicket != null) {
@@ -89,7 +95,8 @@ public class TicketSystem {
             }
 
             if (counter == 0) {
-                System.out.println("There is no possible variants.");
+                logger.log(Level.WARNING, "There is no possible variants.");
+                return;
             }
         }
     }

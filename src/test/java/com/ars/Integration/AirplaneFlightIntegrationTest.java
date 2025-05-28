@@ -8,10 +8,10 @@ import java.sql.Timestamp;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AirplaneFlightIntegrationTest {
+class AirplaneFlightIntegrationTest {
 
     @Test
-    public void testAirplaneInjectedIntoFlightCorrectly() {
+    void testAirplaneInjectedIntoFlightCorrectly() {
         // Creating a Real Airplane Object
         Airplane airplane = new Airplane(101, "A320", 10, 50, 10);
 
@@ -45,7 +45,7 @@ public class AirplaneFlightIntegrationTest {
     }
 
     @Test
-    public void testFlightCreationFailsWithNullAirplane() {
+    void testFlightCreationFailsWithNullAirplane() {
         Timestamp from = Timestamp.valueOf("2025-04-30 08:00:00");
         Timestamp to = Timestamp.valueOf("2025-04-30 12:00:00");
 

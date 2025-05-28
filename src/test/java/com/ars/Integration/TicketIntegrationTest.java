@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 
-public class TicketIntegrationTest {
+class TicketIntegrationTest {
 
     private Airplane airplane;
     private Flight flight;
@@ -18,7 +18,7 @@ public class TicketIntegrationTest {
     private Ticket ticket;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         airplane = new Airplane(1, "G", 10, 50, 10);
 
         Timestamp dateFrom = Timestamp.valueOf("2025-06-01 10:00:00");
@@ -43,7 +43,7 @@ public class TicketIntegrationTest {
     }
 
     @Test
-    public void testAirplaneFields() {
+    void testAirplaneFields() {
         assertEquals(1, airplane.getAirplaneID());
         assertEquals("G", airplane.getAirplaneModel());
         assertEquals(10, airplane.getBusinessSitsNumber());
@@ -52,7 +52,7 @@ public class TicketIntegrationTest {
     }
 
     @Test
-    public void testFlightFields() {
+    void testFlightFields() {
         assertEquals(1, flight.getFlightID());
         assertEquals("Tokyo", flight.getDepartTo());
         assertEquals("Sydney", flight.getDepartFrom());
@@ -64,7 +64,7 @@ public class TicketIntegrationTest {
     }
 
     @Test
-    public void testPassengerFields() {
+    void testPassengerFields() {
         assertEquals("Alice", passenger.getFirstName());
         assertEquals("Wonder", passenger.getSecondName());
         assertEquals(30, passenger.getAge());
@@ -77,7 +77,7 @@ public class TicketIntegrationTest {
     }
 
     @Test
-    public void testTicketCreation() {
+    void testTicketCreation() {
         assertEquals(101, ticket.getTicketId());
         assertEquals(flight, ticket.getFlight());
         assertEquals(passenger, ticket.getPassenger());
@@ -86,7 +86,7 @@ public class TicketIntegrationTest {
     }
 
     @Test
-    public void testTicketPriceCalculationWithServiceTaxAndSale() {
+    void testTicketPriceCalculationWithServiceTaxAndSale() {
         Passenger child = new Passenger(
                 "Tom",
                 "Kid",
@@ -117,14 +117,14 @@ public class TicketIntegrationTest {
     }
 
     @Test
-    public void testTicketStatusUpdate() {
+    void testTicketStatusUpdate() {
         assertFalse(ticket.ticketStatus());
         ticket.setTicketStatus(true);
         assertTrue(ticket.ticketStatus());
     }
 
     @Test
-    public void testAddTicketsToCollection() {
+    void testAddTicketsToCollection() {
         ArrayList<Ticket> batch = new ArrayList<>();
         batch.add(ticket);
 
@@ -136,7 +136,7 @@ public class TicketIntegrationTest {
     }
 
     @Test
-    public void testDuplicateTicketIdThrows() {
+    void testDuplicateTicketIdThrows() {
         ArrayList<Ticket> duplicateBatch = new ArrayList<>();
         duplicateBatch.add(ticket);
         duplicateBatch.add(ticket); // same ID
@@ -149,7 +149,7 @@ public class TicketIntegrationTest {
     }
 
     @Test
-    public void testGetTicketInfo() {
+    void testGetTicketInfo() {
         ArrayList<Ticket> tickets = new ArrayList<>();
         tickets.add(ticket);
         TicketCollection.addTickets(tickets);

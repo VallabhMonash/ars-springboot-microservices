@@ -9,8 +9,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
-public class TicketSystemIntegrationTest {
+ class TicketSystemIntegrationTest {
     private Airplane airplane;
     private Flight flight;
     private Passenger passenger;
@@ -19,7 +18,7 @@ public class TicketSystemIntegrationTest {
     private TicketSystem ticketSystem;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         TicketCollection.tickets.clear();
         FlightCollection.flights.clear();
 
@@ -63,20 +62,20 @@ public class TicketSystemIntegrationTest {
     }
 
     @Test
-    public void testBuyTicketWithInvalidTicket() {
+    void testBuyTicketWithInvalidTicket() {
         ticketSystem.buyTicket(999, passenger);
         assertNull(TicketCollection.getTicketInfo(999));
     }
 
     @Test
-    public void testBuyTicketAlreadyBooked() {
+    void testBuyTicketAlreadyBooked() {
         ticket.setTicketStatus(true);
         ticketSystem.buyTicket(ticket.getTicketId(), passenger);
         assertNull(ticket.getPassenger());
     }
 
     @Test
-    public void testBuyTicketWithoutFlight() {
+    void testBuyTicketWithoutFlight() {
         FlightCollection.flights.clear();
         Ticket ticketNoFlight = new Ticket(103, 500, flight, false, null);
         ArrayList<Ticket> tempBatch = new ArrayList<>();
@@ -87,7 +86,7 @@ public class TicketSystemIntegrationTest {
     }
 
     @Test
-    public void testBuyTicketSuccessEconomy() {
+    void testBuyTicketSuccessEconomy() {
         ticketSystem.buyTicket(101, passenger);
         assertEquals(passenger, ticket.getPassenger());
         assertTrue(ticket.ticketStatus());
@@ -95,7 +94,7 @@ public class TicketSystemIntegrationTest {
     }
 
     @Test
-    public void testBuyTicketSuccessBusinessVip() {
+    void testBuyTicketSuccessBusinessVip() {
         Ticket vipTicket = new Ticket(104, 2000, flight, true, null);
         ArrayList<Ticket> tempBatch = new ArrayList<>();
         tempBatch.add(vipTicket);
@@ -108,21 +107,21 @@ public class TicketSystemIntegrationTest {
     }
 
     @Test
-    public void testChooseTicketDirectFlight() {
+    void testChooseTicketDirectFlight() {
         ticketSystem.chooseTicket("Sydney", "Tokyo", passenger);
         assertEquals(passenger, ticket.getPassenger());
         assertTrue(ticket.ticketStatus());
     }
 
     @Test
-    public void testChooseTicketWithConnection() {
+    void testChooseTicketWithConnection() {
         ticketSystem.chooseTicket("Melbourne", "Tokyo", passenger);
         assertTrue(ticket.ticketStatus());
         assertTrue(connectingTicket.ticketStatus());
     }
 
     @Test
-    public void testChooseTicketNoVariants() {
+    void testChooseTicketNoVariants() {
         ticketSystem.chooseTicket("New York", "London", passenger);
         assertFalse(ticket.ticketStatus());
     }
