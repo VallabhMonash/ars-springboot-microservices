@@ -10,6 +10,8 @@ public class Airplane {
     private int economySitsNumber;
     private int crewSitsNumber;
 
+    private static final int MAX_SEATS = ( 'J' - 'A' + 1 ) * 7;
+
     private Map<String, String> seatAssignments; // key: row+seatNumber (e.g., A1), value: type (business/economy/crew)
 
     public Airplane(int airplaneID, String airplaneModel, int businessSitsNumber, int economySitsNumber,
@@ -21,6 +23,13 @@ public class Airplane {
         if (airplaneModel == null || airplaneModel.isEmpty())
             throw new IllegalArgumentException("Model cannot be null or empty.");
 
+        int total = businessSitsNumber + economySitsNumber + crewSitsNumber;
+        final int MAX = 10 * 7;  // A–J × 7 seats
+        if (total != MAX)
+            throw new IllegalArgumentException(
+                    "Total seats must be exactly " + MAX + "; got " + total
+            );
+
         this.airplaneID = airplaneID;
         this.airplaneModel = airplaneModel;
         this.businessSitsNumber = businessSitsNumber;
@@ -29,29 +38,24 @@ public class Airplane {
         this.seatAssignments = initializeSeatAssignments();
     }
 
-    private Map<String, String> initializeSeatAssignments() {
-        Map<String, String> assignments = new HashMap<>();
+    private Map<String,String> initializeSeatAssignments() {
+        Map<String,String> assignments = new HashMap<>();
         int totalSits = businessSitsNumber + economySitsNumber + crewSitsNumber;
-        int assigned = 0;
+        // exactly totalSits iterations, no breaks
+        for (int i = 0; i < totalSits; i++) {
+            char row    = (char) ('A' + (i / 7));      // 0–6 → 'A', 7–13 → 'B'
+            int  seatNo = (i % 7) + 1;                 // 0→1, …, 6→7
+            String key  = "" + row + seatNo;
 
-        for (char row = 'A'; row <= 'J'; row++) {
-            boolean flag = false;
-            for (int seat = 1; seat <= 7; seat++) {
-                String key = row + String.valueOf(seat);
-                if (assigned < businessSitsNumber) {
-                    assignments.put(key, "business");
-                } else if (assigned < businessSitsNumber + economySitsNumber) {
-                    assignments.put(key, "economy");
-                } else if (assigned < totalSits) {
-                    assignments.put(key, "crew");
-                } else {
-                    flag = true;
-                    break;
-                }
-                if (flag)
-                    break;
-                assigned++;
+            String type;
+            if (i < businessSitsNumber) {
+                type = "business";
+            } else if (i < businessSitsNumber + economySitsNumber) {
+                type = "economy";
+            } else {
+                type = "crew";
             }
+            assignments.put(key, type);
         }
         return assignments;
     }
@@ -76,36 +80,43 @@ public class Airplane {
         this.airplaneModel = airplaneModel;
     }
 
-    public int getBusinessSitsNumber() {
+    public int getBusinessSitsNumber()
+    {
         return businessSitsNumber;
     }
 
-    public void setBusinessSitsNumber(int businessSitsNumber) {
-        if (businessSitsNumber < 0 || economySitsNumber <= 0 || crewSitsNumber <= 0)
-            throw new IllegalArgumentException("Seat counts must be non-negative.");
-        this.businessSitsNumber = businessSitsNumber;
-        this.seatAssignments = initializeSeatAssignments();
+
+    public void setBusinessSitsNumber(int businessSitsNumberParam) {
+        if (businessSitsNumberParam < 0 || businessSitsNumberParam > MAX_SEATS) {
+            throw new IllegalArgumentException("Business seat count must be non-negative.");
+        }
+        this.businessSitsNumber = businessSitsNumberParam;
+        this.seatAssignments    = initializeSeatAssignments();
     }
 
-    public int getEconomySitsNumber() {
+    public int getEconomySitsNumber()
+    {
         return economySitsNumber;
     }
 
-    public void setEconomySitsNumber(int economySitsNumber) {
-        if (economySitsNumber <= 0)
-            throw new IllegalArgumentException("Seat counts must be non-negative.");
-        this.economySitsNumber = economySitsNumber;
-        this.seatAssignments = initializeSeatAssignments();
+    public void setEconomySitsNumber(int economySitsNumberParam) {
+        if (economySitsNumberParam <= 0 || economySitsNumberParam > MAX_SEATS) {
+            throw new IllegalArgumentException("Economy seat count must be positive.");
+        }
+        this.economySitsNumber = economySitsNumberParam;
+        this.seatAssignments   = initializeSeatAssignments();
     }
 
-    public int getCrewSitsNumber() {
+    public int getCrewSitsNumber()
+    {
         return crewSitsNumber;
     }
 
-    public void setCrewSitsNumber(int crewSitsNumber) {
-        if (businessSitsNumber < 0 || economySitsNumber <= 0 || crewSitsNumber <= 0)
-            throw new IllegalArgumentException("Seat counts must be non-negative.");
-        this.crewSitsNumber = crewSitsNumber;
+    public void setCrewSitsNumber(int crewSitsNumberParam) {
+        if (crewSitsNumberParam <= 0 || crewSitsNumberParam > MAX_SEATS) {
+            throw new IllegalArgumentException("Crew seat count must be positive.");
+        }
+        this.crewSitsNumber = crewSitsNumberParam;
         this.seatAssignments = initializeSeatAssignments();
     }
 
@@ -122,10 +133,10 @@ public class Airplane {
                 '}';
     }
 
-    public static Airplane getAirPlaneInfo(int airplane_id) {
+    public static Airplane getAirPlaneInfo(int airplaneID) {
         for (Flight flight : FlightCollection.getFlights()) {
             Airplane airplane = flight.getAirplane();
-            if (airplane != null && airplane.getAirplaneID() == airplane_id) {
+            if (airplane != null && airplane.getAirplaneID() == airplaneID) {
                 return airplane;
             }
         }

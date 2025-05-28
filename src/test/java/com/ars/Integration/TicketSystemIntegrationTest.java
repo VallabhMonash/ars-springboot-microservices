@@ -23,7 +23,7 @@ public class TicketSystemIntegrationTest {
         TicketCollection.tickets.clear();
         FlightCollection.flights.clear();
 
-        airplane = new Airplane(1, "Boeing 787", 5, 100, 10);
+        airplane = new Airplane(1, "Boeing 787", 10, 50, 10);
 
         Timestamp dateFrom = Timestamp.valueOf("2025-06-01 10:00:00");
         Timestamp dateTo = Timestamp.valueOf("2025-06-01 14:00:00");
@@ -80,7 +80,7 @@ public class TicketSystemIntegrationTest {
         ticketSystem.buyTicket(101, passenger);
         assertEquals(passenger, ticket.getPassenger());
         assertTrue(ticket.ticketStatus());
-        assertEquals(99, airplane.getEconomySitsNumber());
+        assertEquals(49, airplane.getEconomySitsNumber());
     }
 
     @Test
@@ -93,7 +93,7 @@ public class TicketSystemIntegrationTest {
         ticketSystem.buyTicket(104, passenger);
         assertEquals(passenger, vipTicket.getPassenger());
         assertTrue(vipTicket.ticketStatus());
-        assertEquals(4, airplane.getBusinessSitsNumber());
+        assertEquals(9, airplane.getBusinessSitsNumber());
     }
 
     @Test

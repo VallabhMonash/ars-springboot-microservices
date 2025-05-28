@@ -24,7 +24,7 @@ class TicketPassengerIntegrationTest {
                 "1234567890123456", 123
         );
 
-        Airplane airplane = new Airplane(1, "Boeing 737", 10, 100, 5);
+        Airplane airplane = new Airplane(1, "Boeing 737", 10, 50, 10);
 
         flight = new Flight(
                 1, "Melbourne", "Sydney", "FL123", "Qantas",

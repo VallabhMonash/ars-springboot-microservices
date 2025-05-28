@@ -19,7 +19,7 @@ public class TicketIntegrationTest {
 
     @BeforeEach
     public void setup() {
-        airplane = new Airplane(1, "G", 10, 1, 20);
+        airplane = new Airplane(1, "G", 10, 50, 10);
 
         Timestamp dateFrom = Timestamp.valueOf("2025-06-01 10:00:00");
         Timestamp dateTo = Timestamp.valueOf("2025-06-01 14:00:00");
@@ -38,8 +38,8 @@ public class TicketIntegrationTest {
         assertEquals(1, airplane.getAirplaneID());
         assertEquals("G", airplane.getAirplaneModel());
         assertEquals(10, airplane.getBusinessSitsNumber());
-        assertEquals(1, airplane.getEconomySitsNumber());
-        assertEquals(20, airplane.getCrewSitsNumber());
+        assertEquals(50, airplane.getEconomySitsNumber());
+        assertEquals(10, airplane.getCrewSitsNumber());
     }
 
     @Test

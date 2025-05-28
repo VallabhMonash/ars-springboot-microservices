@@ -13,7 +13,7 @@ public class AirplaneFlightIntegrationTest {
     @Test
     public void testAirplaneInjectedIntoFlightCorrectly() {
         // Creating a Real Airplane Object
-        Airplane airplane = new Airplane(101, "A320", 12, 150, 6);
+        Airplane airplane = new Airplane(101, "A320", 10, 50, 10);
 
         // Create departure and arrival times
         Timestamp from = Timestamp.valueOf("2025-04-30 08:00:00");

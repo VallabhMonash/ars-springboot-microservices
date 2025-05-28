@@ -19,7 +19,7 @@ class FlightCollectionIntegrationTest {
     void setUp() {
         FlightCollection.flights = new ArrayList<>(); // Make sure to reset before each test
 
-        Airplane airplane = new Airplane(1, "Boeing 737", 10, 100, 5);
+        Airplane airplane = new Airplane(1, "Boeing 737", 10, 50, 10);
 
         flight = new Flight(
                 1, "Melbourne", "Sydney", "FL123", "Qantas",
