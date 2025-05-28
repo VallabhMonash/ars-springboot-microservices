@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 import java.util.Map;
-//test
+//test classes
 public class AirplaneTest {
 
     @Test
