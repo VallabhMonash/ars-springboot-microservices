@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -83,4 +84,89 @@ class FlightCollectionTest {
         Flight result = FlightCollection.getFlightInfo("Brisbane");
         assertEquals(validFlight, result);
     }
+
+    // Null and “no match” for the two-city lookup
+    @Test
+    void lookupByCitiesWithNullOrNoMatchReturnsNull() {
+        // no flights in collection
+        assertNull(FlightCollection.getFlightInfo(null, "Sydney"));
+        assertNull(FlightCollection.getFlightInfo("Melbourne", null));
+        // add a flight that doesn’t match
+        Flight f = mock(Flight.class);
+        when(f.getDepartFrom()).thenReturn("X");
+        when(f.getDepartTo()).thenReturn("Y");
+        FlightCollection.addFlights(List.of(f));
+        assertNull(FlightCollection.getFlightInfo("A", "B"));
+    }
+
+    // Blank and “no match” for single-city lookup
+    @Test
+    void lookupByDestinationWithNullOrNoMatchReturnsNull() {
+        assertNull(FlightCollection.getFlightInfo((String)null));
+        assertNull(FlightCollection.getFlightInfo(""));
+        Flight f = mock(Flight.class);
+        when(f.getDepartTo()).thenReturn("Brisbane");
+        FlightCollection.addFlights(List.of(f));
+        assertNull(FlightCollection.getFlightInfo("Perth"));
+    }
+
+    // Invalid ID lookup
+    @Test
+    void lookupByIdNotFoundReturnsNull() {
+        Flight f = mock(Flight.class);
+        when(f.getFlightID()).thenReturn(99);
+        FlightCollection.addFlights(List.of(f));
+        assertNull(FlightCollection.getFlightInfo(  0));
+        assertNull(FlightCollection.getFlightInfo(100));
+    }
+
+    // Case-insensitive matching
+    @Test
+    void lookupIsCaseInsensitive() {
+        Flight f = mock(Flight.class);
+        when(f.getDepartFrom()).thenReturn("Melbourne");
+        when(f.getDepartTo())  .thenReturn("Sydney");
+        FlightCollection.addFlights(List.of(f));
+        assertSame(f, FlightCollection.getFlightInfo("melbourne", "SYDNEY"));
+        when(f.getDepartTo()).thenReturn("Brisbane");
+        FlightCollection.clearFlights();
+        FlightCollection.addFlights(List.of(f));
+        assertSame(f, FlightCollection.getFlightInfo("bRiSbAnE"));
+    }
+
+    // Adding multiple unique flights
+    @Test
+    void addFlights_multipleUnique_increasesSize() {
+        Flight a = mock(Flight.class), b = mock(Flight.class);
+        when(a.getCode()).thenReturn("A"); when(a.getDateFrom()).thenReturn(Timestamp.valueOf("2025-01-01 00:00:00"));
+        when(b.getCode()).thenReturn("B"); when(b.getDateFrom()).thenReturn(Timestamp.valueOf("2025-01-02 00:00:00"));
+        FlightCollection.clearFlights();
+        FlightCollection.addFlights(List.of(a, b));
+        assertEquals(2, FlightCollection.getFlights().size());
+    }
+
+    // Duplicate in the same batch
+    @Test
+    void addFlights_batchWithDuplicate_throws() {
+        Flight dup = mock(Flight.class);
+        when(dup.getCode()).thenReturn("DUP");
+        when(dup.getDateFrom()).thenReturn(Timestamp.valueOf("2025-01-01 00:00:00"));
+
+        List<Flight> batch = List.of(dup, dup);
+        FlightCollection.clearFlights();
+        assertThrows(IllegalArgumentException.class, () -> FlightCollection.addFlights(batch));
+    }
+
+    // getFlights() accessor
+    @Test
+    void getFlightsReflectsUnderlyingList() {
+        FlightCollection.clearFlights();
+        Flight f = mock(Flight.class);
+        when(f.getCode()).thenReturn("C"); when(f.getDateFrom()).thenReturn(Timestamp.valueOf("2025-01-01 00:00:00"));
+        List<Flight> holder = FlightCollection.getFlights();
+        holder.add(f);
+        assertEquals(1, FlightCollection.getFlights().size());
+    }
+
 }
+

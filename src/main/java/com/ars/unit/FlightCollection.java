@@ -65,6 +65,7 @@ public class FlightCollection {
 		return null;
 	}
 
-
-
+	public static void clearFlights() {
+		flights.clear();
+	}
 }
