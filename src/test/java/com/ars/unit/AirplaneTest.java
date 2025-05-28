@@ -123,11 +123,16 @@ class AirplaneTest {
     @Test
     void testGetAirPlaneInfo() {
         Airplane plane = new Airplane(6, "Lookup", 10, 50, 10);
+
+        Timestamp from = Timestamp.valueOf("2025-06-01 10:00:00");
+        Timestamp to = Timestamp.valueOf("2025-06-01 12:00:00");
+
+        Flight.FlightSchedule flightSchedule = new Flight.FlightSchedule(from, to);
+
         Flight flight = new Flight(
                 100,
                 "A", "B", "CODE", "COMP",
-                Timestamp.valueOf("2025-06-01 10:00:00"),
-                Timestamp.valueOf("2025-06-01 12:00:00"),
+                flightSchedule,
                 plane
         );
         FlightCollection.addFlights(new ArrayList<>(List.of(flight)));

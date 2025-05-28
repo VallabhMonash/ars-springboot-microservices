@@ -19,6 +19,7 @@ public class AirplaneFlightIntegrationTest {
         Timestamp from = Timestamp.valueOf("2025-04-30 08:00:00");
         Timestamp to = Timestamp.valueOf("2025-04-30 12:00:00");
 
+        Flight.FlightSchedule flightSchedule = new Flight.FlightSchedule(from, to);
         // Create a real Flight object and inject Airplane
         Flight flight = new Flight(
                 1,
@@ -26,8 +27,7 @@ public class AirplaneFlightIntegrationTest {
                 "Melbourne",
                 "QF123",
                 "Qantas",
-                from,
-                to,
+                flightSchedule,
                 airplane
         );
 
@@ -49,6 +49,8 @@ public class AirplaneFlightIntegrationTest {
         Timestamp from = Timestamp.valueOf("2025-04-30 08:00:00");
         Timestamp to = Timestamp.valueOf("2025-04-30 12:00:00");
 
+        Flight.FlightSchedule flightSchedule = new Flight.FlightSchedule(from, to);
+
         assertThrows(IllegalArgumentException.class, () -> {
             new Flight(
                     2,
@@ -56,8 +58,7 @@ public class AirplaneFlightIntegrationTest {
                     "Shanghai",
                     "CA888",
                     "AirChina",
-                    from,
-                    to,
+                    flightSchedule,
                     null // null airplane
             );
         });

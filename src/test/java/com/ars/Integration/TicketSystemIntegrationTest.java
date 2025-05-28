@@ -27,11 +27,14 @@ public class TicketSystemIntegrationTest {
 
         Timestamp dateFrom = Timestamp.valueOf("2025-06-01 10:00:00");
         Timestamp dateTo = Timestamp.valueOf("2025-06-01 14:00:00");
-        flight = new Flight(1, "Tokyo", "Sydney", "JL123", "Japan Airlines", dateFrom, dateTo, airplane);
+
+        Flight.FlightSchedule flightSchedule = new Flight.FlightSchedule(dateFrom, dateTo);
+
+        flight = new Flight(1, "Tokyo", "Sydney", "JL123", "Japan Airlines", flightSchedule, airplane);
 
         Timestamp connectDateFrom = Timestamp.valueOf("2025-06-01 16:00:00");
         Timestamp connectDateTo = Timestamp.valueOf("2025-06-01 20:00:00");
-        Flight connectingFlight = new Flight(2, "Sydney", "Melbourne", "JL456", "Japan Airlines", connectDateFrom, connectDateTo, airplane);
+        Flight connectingFlight = new Flight(2, "Sydney", "Melbourne", "JL456", "Japan Airlines", flightSchedule, airplane);
 
         ArrayList<Flight> flights = new ArrayList<>();
         flights.add(flight);

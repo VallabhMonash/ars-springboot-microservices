@@ -24,7 +24,9 @@ public class TicketIntegrationTest {
         Timestamp dateFrom = Timestamp.valueOf("2025-06-01 10:00:00");
         Timestamp dateTo = Timestamp.valueOf("2025-06-01 14:00:00");
 
-        flight = new Flight(1, "Tokyo", "Sydney", "JL123", "Japan Airlines", dateFrom, dateTo, airplane);
+        Flight.FlightSchedule flightSchedule = new Flight.FlightSchedule(dateFrom, dateTo);
+
+        flight = new Flight(1, "Tokyo", "Sydney", "JL123", "Japan Airlines", flightSchedule, airplane);
 
         passenger = new Passenger("Alice", "Wonder", 30, "Man", "alice@mail.com",
                 "0412345678", "G12345678", "1234567890123456", 123);
