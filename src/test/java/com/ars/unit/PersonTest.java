@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PersonTest {
+class PersonTest {
 
     private Person createPerson(String firstName, String secondName, int age, String gender) {
         return new Person() {
@@ -18,7 +18,7 @@ public class PersonTest {
     }
 
     @Test
-    public void testAllFieldsRequired() {
+    void testAllFieldsRequired() {
         assertThrows(IllegalArgumentException.class, () -> {
             createPerson(null, "Smith", 25, "Woman");
         });
@@ -34,7 +34,7 @@ public class PersonTest {
 
 
     @Test
-    public void testValidGenderOptions() {
+    void testValidGenderOptions() {
         assertDoesNotThrow(() -> createPerson("Alice", "Smith", 25, "Woman"));
         assertDoesNotThrow(() -> createPerson("Alice", "Smith", 25, "Man"));
         assertDoesNotThrow(() -> createPerson("Alice", "Smith", 25, "Non-Binary"));
@@ -43,7 +43,7 @@ public class PersonTest {
     }
 
     @Test
-    public void testInvalidGender() {
+    void testInvalidGender() {
         assertThrows(IllegalArgumentException.class, () -> {
             createPerson("Alice", "Smith", 25, "Alien");
         });
@@ -51,28 +51,28 @@ public class PersonTest {
 
 
     @Test
-    public void testInvalidFirstNameStartWithNumber() {
+    void testInvalidFirstNameStartWithNumber() {
         assertThrows(IllegalArgumentException.class, () -> {
             createPerson("1Alice", "Smith", 25, "Woman");
         });
     }
 
     @Test
-    public void testInvalidFirstNameStartWithSymbol() {
+    void testInvalidFirstNameStartWithSymbol() {
         assertThrows(IllegalArgumentException.class, () -> {
             createPerson("@lice", "Smith", 25, "Woman");
         });
     }
 
     @Test
-    public void testInvalidSecondNamesStartWithNumber() {
+    void testInvalidSecondNamesStartWithNumber() {
         assertThrows(IllegalArgumentException.class, () -> {
             createPerson("Alice", "9Smith", 25, "Woman");
         });
     }
 
     @Test
-    public void testInvalidSecondNamesStartWithSymbol() {
+    void testInvalidSecondNamesStartWithSymbol() {
         assertThrows(IllegalArgumentException.class, () -> {
             createPerson("Alice", "$mith", 25, "Woman");
         });
@@ -80,7 +80,7 @@ public class PersonTest {
 
 
     @Test
-    public void testBoundaryValidNames() {
+    void testBoundaryValidNames() {
         assertDoesNotThrow(() -> createPerson("A", "B", 25, "Man"));
     }
 

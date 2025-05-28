@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FlightTest {
+class FlightTest {
 
     @Test
-    public void testValidFlightCreation() {
+    void testValidFlightCreation() {
         Airplane airplaneMock = Mockito.mock(Airplane.class);
         Timestamp from = Timestamp.valueOf("2025-04-21 10:00:00");
         Timestamp to   = Timestamp.valueOf("2025-04-21 12:00:00");
@@ -33,7 +33,7 @@ public class FlightTest {
     }
 
     @Test
-    public void testEmptyDepartTo() {
+    void testEmptyDepartTo() {
         Airplane airplaneMock = Mockito.mock(Airplane.class);
         Timestamp from = Timestamp.valueOf("2025-04-21 10:00:00");
         Timestamp to   = Timestamp.valueOf("2025-04-21 12:00:00");
@@ -53,7 +53,7 @@ public class FlightTest {
     }
 
     @Test
-    public void testNullDepartTo() {
+    void testNullDepartTo() {
         Airplane airplaneMock = Mockito.mock(Airplane.class);
         Timestamp from = Timestamp.valueOf("2025-04-21 10:00:00");
         Timestamp to   = Timestamp.valueOf("2025-04-21 12:00:00");
@@ -73,7 +73,7 @@ public class FlightTest {
     }
 
     @Test
-    public void testEmptyDepartFrom() {
+    void testEmptyDepartFrom() {
         Airplane airplaneMock = Mockito.mock(Airplane.class);
         Timestamp from = Timestamp.valueOf("2025-04-21 10:00:00");
         Timestamp to   = Timestamp.valueOf("2025-04-21 12:00:00");
@@ -93,7 +93,7 @@ public class FlightTest {
     }
 
     @Test
-    public void testNullDepartFrom() {
+    void testNullDepartFrom() {
         Airplane airplaneMock = Mockito.mock(Airplane.class);
         Timestamp from = Timestamp.valueOf("2025-04-21 10:00:00");
         Timestamp to   = Timestamp.valueOf("2025-04-21 12:00:00");
@@ -113,7 +113,7 @@ public class FlightTest {
     }
 
     @Test
-    public void testInvalidDateRange() {
+    void testInvalidDateRange() {
         Airplane airplaneMock = Mockito.mock(Airplane.class);
         Timestamp from = Timestamp.valueOf("2025-04-21 14:00:00");
         Timestamp to   = Timestamp.valueOf("2025-04-21 12:00:00");
@@ -122,7 +122,7 @@ public class FlightTest {
     }
 
     @Test
-    public void testNullAirplane() {
+    void testNullAirplane() {
         Timestamp from = Timestamp.valueOf("2025-04-21 10:00:00");
         Timestamp to   = Timestamp.valueOf("2025-04-21 12:00:00");
         Flight.FlightSchedule schedule = new Flight.FlightSchedule(from, to);
@@ -141,7 +141,7 @@ public class FlightTest {
     }
 
     @Test
-    public void testDuplicateFlightInsertion() {
+    void testDuplicateFlightInsertion() {
         Airplane airplaneMock = Mockito.mock(Airplane.class);
         Timestamp from = Timestamp.valueOf("2025-04-21 10:00:00");
         Timestamp to   = Timestamp.valueOf("2025-04-21 12:00:00");

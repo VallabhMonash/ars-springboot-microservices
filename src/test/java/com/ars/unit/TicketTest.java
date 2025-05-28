@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class TicketTest {
+class TicketTest {
 
     private static final int PRICE = 100;
 
@@ -33,7 +33,7 @@ public class TicketTest {
 
     // Boundary Value Testing (BVT)
     @Test
-    public void testBoundaryAgeDiscountChild() {
+    void testBoundaryAgeDiscountChild() {
         // Boundary value for a child age: 15 shouldn't apply a discount (50%)
         setAge(15);
         assertEquals(112, ticket.getPrice(), "Price should not be halved for age = 15");
@@ -48,7 +48,7 @@ public class TicketTest {
     }
 
     @Test
-    public void testBoundaryAgeDiscountSenior() {
+    void testBoundaryAgeDiscountSenior() {
         // Boundary value for senior citizens (e.g., age = 60)
         setAge(60);
         assertEquals(0, ticket.getPrice(), "Price should be 0 for seniors (age = 60)");
@@ -60,7 +60,7 @@ public class TicketTest {
 
     // Equivalence Testing (ET)
     @Test
-    public void testSaleByAgeForAdult() {
+    void testSaleByAgeForAdult() {
         // Age between 18 and 59 is considered adult (equivalence class)
         setAge(30);
         assertEquals(112, ticket.getPrice(), "Price should include 12% service tax for adult");
@@ -71,7 +71,7 @@ public class TicketTest {
     }
 
     @Test
-    public void testSaleByAgeForChild() {
+    void testSaleByAgeForChild() {
         // Age between 0 and 14 is considered a child (equivalence class)
         setAge(10);
         assertEquals(56, ticket.getPrice(), "Price should be halved for a child with service tax");
@@ -83,7 +83,7 @@ public class TicketTest {
 
 
     @Test
-    public void testTicketStatus() {
+    void testTicketStatus() {
         // Decision table: Checking different ticket status transitions
         assertFalse(ticket.ticketStatus(), "Ticket should not be booked initially");  // Status = false (not booked)
 
