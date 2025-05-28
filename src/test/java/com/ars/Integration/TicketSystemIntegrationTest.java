@@ -41,7 +41,15 @@ public class TicketSystemIntegrationTest {
         flights.add(connectingFlight);
         FlightCollection.addFlights(flights);
 
-        passenger = new Passenger("Alice", "Wonder", 30, "Female", "alice@mail.com", "0412345678", "G12345678", "1234567890123456", 123);
+        passenger = new Passenger(
+                "Alice",
+                "Wonder",
+                30,
+                "Female",
+                new Passenger.ContactInfo("alice@mail.com", "0412345678"),
+                "G12345678",
+                new Passenger.PaymentInfo("1234567890123456", 123)
+        );
 
         ticket = new Ticket(101, 1000, flight, false, null);
         connectingTicket = new Ticket(102, 800, connectingFlight, false, null);

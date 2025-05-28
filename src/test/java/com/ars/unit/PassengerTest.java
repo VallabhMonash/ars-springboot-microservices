@@ -10,25 +10,22 @@ public class PassengerTest {
 
     private Passenger createPassenger(String firstName, String secondName, int age, String gender,
                                       String email, String phoneNumber, String passport, String cardNumber, int securityCode) {
-        Person personMock = mock(Person.class);
 
+        Person personMock = mock(Person.class);
         when(personMock.getFirstName()).thenReturn(firstName);
         when(personMock.getSecondName()).thenReturn(secondName);
         when(personMock.getAge()).thenReturn(age);
         when(personMock.getGender()).thenReturn(gender);
 
-        Passenger passenger = new Passenger(
+        return new Passenger(
                 personMock.getFirstName(),
                 personMock.getSecondName(),
                 personMock.getAge(),
                 personMock.getGender(),
-                email,
-                phoneNumber,
+                new Passenger.ContactInfo(email, phoneNumber),
                 passport,
-                cardNumber,
-                securityCode);
+                new Passenger.PaymentInfo(cardNumber, securityCode));
 
-        return passenger;
     }
 
     // ✅ valid email

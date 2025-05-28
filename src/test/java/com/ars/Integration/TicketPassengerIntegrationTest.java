@@ -20,9 +20,13 @@ class TicketPassengerIntegrationTest {
     @BeforeEach
     void setUp() {
         passenger = new Passenger(
-                "John", "Doe", 30, "Man",
-                "john.doe@example.com", "0412345678", "G12345678",
-                "1234567890123456", 123
+                "John",
+                "Doe",
+                30,
+                "Man",
+                new Passenger.ContactInfo("john.doe@example.com", "0412345678"),
+                "G12345678",
+                new Passenger.PaymentInfo("1234567890123456", 123)
         );
 
         Airplane airplane = new Airplane(1, "Boeing 737", 10, 50, 10);
@@ -57,10 +61,15 @@ class TicketPassengerIntegrationTest {
     @Test
     void testTicketPriceAdjustedByPassengerAge() {
         Passenger childPassenger = new Passenger(
-                "Jane", "Smith", 10, "Woman",
-                "jane.smith@example.com", "0412345678", "G12345679",
-                "1234567890123457", 456
+                "Jane",
+                "Smith",
+                10,
+                "Woman",
+                new Passenger.ContactInfo("jane.smith@example.com", "0412345678"),
+                "G12345679",
+                new Passenger.PaymentInfo("1234567890123457", 456)
         );
+
 
         Ticket childTicket = new Ticket(102, 500, flight, false, childPassenger);
 
@@ -71,9 +80,13 @@ class TicketPassengerIntegrationTest {
     @Test
     void testTicketPriceAdjustedForSeniorPassenger() {
         Passenger seniorPassenger = new Passenger(
-                "Alice", "Brown", 65, "Woman",
-                "alice.brown@example.com", "0412345678", "G12345677",
-                "1234567890123458", 789
+                "Alice",
+                "Brown",
+                70,
+                "Woman",
+                new Passenger.ContactInfo("alice.brown@example.com", "0412345678"),
+                "G12345677",
+                new Passenger.PaymentInfo("1234567890123458", 789)
         );
 
         Ticket seniorTicket = new Ticket(103, 800, flight, false, seniorPassenger);

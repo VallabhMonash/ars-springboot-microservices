@@ -28,8 +28,15 @@ public class TicketIntegrationTest {
 
         flight = new Flight(1, "Tokyo", "Sydney", "JL123", "Japan Airlines", flightSchedule, airplane);
 
-        passenger = new Passenger("Alice", "Wonder", 30, "Man", "alice@mail.com",
-                "0412345678", "G12345678", "1234567890123456", 123);
+        passenger = new Passenger(
+                "Alice",
+                "Wonder",
+                30,
+                "Man",
+                new Passenger.ContactInfo("alice@mail.com", "0412345678"),
+                "G12345678",
+                new Passenger.PaymentInfo("1234567890123456", 123)
+        );
 
         ticket = new Ticket(101, 1000, flight, true, passenger);
         TicketCollection.tickets.clear();
@@ -80,14 +87,30 @@ public class TicketIntegrationTest {
 
     @Test
     public void testTicketPriceCalculationWithServiceTaxAndSale() {
-        Passenger child = new Passenger("Tom", "Kid", 10, "Man", "tom@mail.com",
-                "0412345678", "E12345678", "9876543210123456", 123);
+        Passenger child = new Passenger(
+                "Tom",
+                "Kid",
+                10,
+                "Man",
+                new Passenger.ContactInfo("tom@mail.com", "0412345678"),
+                "E12345678",
+                new Passenger.PaymentInfo("9876543210123456", 123)
+        );
+
         Ticket childTicket = new Ticket(102, 1000, flight, false, child);
         // price should be 1000 -> 500 after age discount -> 560 after tax
         assertEquals(560, childTicket.getPrice());
 
-        Passenger elder = new Passenger("Elder", "Lee", 70, "Woman", "elder@mail.com",
-                "0412345678", "E12345678", "9876543210123456", 123);
+        Passenger elder = new Passenger(
+                "Elder",
+                "Lee",
+                70,
+                "Woman",
+                new Passenger.ContactInfo("elder@mail.com", "0412345678"),
+                "E12345678",
+                new Passenger.PaymentInfo("9876543210123456", 123)
+        );
+
         Ticket elderTicket = new Ticket(103, 1000, flight, false, elder);
         // price should be 0 -> 0 after tax
         assertEquals(0, elderTicket.getPrice());
