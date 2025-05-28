@@ -107,7 +107,8 @@ public class Passenger extends Person {
         }
 
         private static String formatPhone(String raw) {
-            String cleaned = raw.replaceAll("[\\s\\-() ]", "");
+            String cleaned = raw.replaceAll("[\\s()-]", "");
+
             if (cleaned.startsWith("04") && cleaned.length() == 10) {
                 return "+61" + cleaned.substring(1);
             } else if (cleaned.startsWith("+614") && cleaned.length() == 12) {
