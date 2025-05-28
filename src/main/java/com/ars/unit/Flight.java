@@ -1,16 +1,8 @@
 package com.ars.unit;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 public class Flight {
-    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm:ss");
-
     private int flightID;
     private String departTo;
     private String departFrom;
@@ -23,7 +15,7 @@ public class Flight {
     public Flight() { }
 
     /**
-     * Grouped schedule parameters into a FlightSchedule object to reduce constructor parameters.
+     * Groups departure/arrival timestamps to reduce constructor parameters.
      */
     public Flight(int flightID,
                   String departTo,
@@ -32,7 +24,6 @@ public class Flight {
                   String company,
                   FlightSchedule schedule,
                   Airplane airplane) {
-        // Validate simple fields
         if (flightID <= 0)
             throw new IllegalArgumentException("Flight ID must be positive");
         if (departTo == null || departTo.isEmpty())
@@ -48,7 +39,6 @@ public class Flight {
         if (airplane == null)
             throw new IllegalArgumentException("Airplane is required");
 
-        // Assign
         this.flightID   = flightID;
         this.departTo   = departTo;
         this.departFrom = departFrom;
@@ -60,7 +50,7 @@ public class Flight {
     }
 
     /**
-     * Helper value object to group departure/arrival timestamps
+     * Helper value object to group departure and arrival Timestamps.
      */
     public static class FlightSchedule {
         private final Timestamp from;
@@ -75,13 +65,8 @@ public class Flight {
             this.to   = to;
         }
 
-        public Timestamp getFrom() {
-            return from;
-        }
-
-        public Timestamp getTo() {
-            return to;
-        }
+        public Timestamp getFrom() { return from; }
+        public Timestamp getTo()   { return to;   }
     }
 
     // Getters and setters
@@ -113,25 +98,11 @@ public class Flight {
     public String toString() {
         return "Flight{" + airplane.toString() +
                 ", dateFrom=" + dateFrom +
-                ", dateTo="   + dateTo +
+                ", dateTo="   + dateTo   +
                 ", departFrom='" + departFrom + '\'' +
                 ", departTo='"   + departTo   + '\'' +
                 ", code='"       + code       + '\'' +
                 ", company='"    + company    + '\'' +
                 '}';
-    }
-
-    // Existing parseTimestamp can be left here if used elsewhere
-    private static Timestamp parseTimestamp(String dateStr, String timeStr, String fieldName) {
-        try {
-            LocalDate d = LocalDate.parse(dateStr, DATE_FMT);
-            LocalTime t = LocalTime.parse(timeStr, TIME_FMT);
-            return Timestamp.valueOf(LocalDateTime.of(d, t));
-        } catch (DateTimeParseException ex) {
-            throw new IllegalArgumentException(
-                    fieldName + " must be in formats YYYY-MM-DD and HH:MM:SS; got '"
-                            + dateStr + " " + timeStr + "'", ex
-            );
-        }
     }
 }
