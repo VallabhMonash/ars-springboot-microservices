@@ -84,4 +84,52 @@ class PersonTest {
         assertDoesNotThrow(() -> createPerson("A", "B", 25, "Man"));
     }
 
+    @Test
+    void testEmptyFirstNameThrows() {
+        assertThrows(IllegalArgumentException.class, () ->
+                createPerson("", "Smith", 25, "Woman")
+        );
+    }
+
+    @Test
+    void testNullSecondNameThrows() {
+        assertThrows(IllegalArgumentException.class, () ->
+                createPerson("Alice", null, 25, "Woman")
+        );
+    }
+
+    @Test
+    void testLowerCaseNamesAllowed() {
+        Person p = createPerson("alice", "wonder", 30, "Other");
+        assertEquals("alice", p.getFirstName());
+        assertEquals("wonder", p.getSecondName());
+    }
+
+    @Test
+    void testAgeSetterAllowsNegative() {
+        Person p = createPerson("Alice", "Smith", 25, "Woman");
+        p.setAge(-5);
+        assertEquals(-5, p.getAge());
+    }
+
+    @Test
+    void testGenderCaseSensitivity() {
+        Person p = createPerson("Alice", "Smith", 25, "Woman");
+        assertThrows(IllegalArgumentException.class, () ->
+                p.setGender("woman")  // must match exactly “Woman”
+        );
+    }
+
+    @Test
+    void testToStringContainsAllFields() {
+        Person p = createPerson("Tom", "Thumb", 40, "Other");
+        String s = p.toString();
+        assertAll("toString",
+                () -> assertTrue(s.contains("firstName='Tom'")),
+                () -> assertTrue(s.contains("secondName='Thumb'")),
+                () -> assertTrue(s.contains("age=40")),
+                () -> assertTrue(s.contains("gender='Other'"))
+        );
+    }
+
 }
