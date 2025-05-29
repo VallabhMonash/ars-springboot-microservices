@@ -90,4 +90,77 @@ class TicketTest {
         ticket.setTicketStatus(true);  // Status = true (booked)
         assertTrue(ticket.ticketStatus(), "Ticket should be booked after status change");
     }
+
+    // should throw when flight argument is null
+    @Test
+    void testConstructorThrowsOnNullFlight() {
+        assertThrows(NullPointerException.class, () ->
+                new Ticket(1, PRICE, null, false, mockPassenger)
+        );
+    }
+
+    // setFlight must reject null
+    @Test
+    void testSetFlightNullThrows() {
+        assertThrows(NullPointerException.class, () ->
+                ticket.setFlight(null)
+        );
+    }
+
+    // setPassenger must reject null
+    @Test
+    void testSetPassengerNullThrows() {
+        assertThrows(NullPointerException.class, () ->
+                ticket.setPassenger(null)
+        );
+    }
+
+    // negative price not allowed
+    @Test
+    void testSetPriceNegativeThrows() {
+        assertThrows(IllegalArgumentException.class, () ->
+                ticket.setPrice(-5)
+        );
+    }
+
+    // ticketId getter/setter
+    @Test
+    void testGettersAndSettersWork() {
+        ticket.setTicketId(42);
+        assertEquals(42, ticket.getTicketId());
+
+        // classVip getter/setter
+        ticket.setClassVip(false);
+        assertFalse(ticket.isClassVip());
+        ticket.setClassVip(true);
+        assertTrue(ticket.isClassVip());
+
+        // status getter/setter
+        ticket.setTicketStatus(true);
+        assertTrue(ticket.ticketStatus());
+        ticket.setTicketStatus(false);
+        assertFalse(ticket.ticketStatus());
+
+        // price setter (no exception) and getter returns taxed value
+        ticket.setPrice(200);
+
+        assertEquals(112, ticket.getPrice());
+    }
+
+    // stub toString of flight and passenger
+    @Test
+    void testToStringIncludesAllDetails() {
+        when(mockFlight.toString()).thenReturn("Flight[ID=1]");
+        when(mockPassenger.toString()).thenReturn("Passenger[Alice]");
+        ticket.setTicketStatus(true);
+
+        String str = ticket.toString();
+        assertAll("toString content",
+                () -> assertTrue(str.contains("Price=" + ticket.getPrice())),
+                () -> assertTrue(str.contains("Flight[ID=1]")),
+                () -> assertTrue(str.contains("VIP=" + ticket.isClassVip())),
+                () -> assertTrue(str.contains("Passenger[Alice]")),
+                () -> assertTrue(str.contains("Booked=" + ticket.ticketStatus()))
+        );
+    }
 }
