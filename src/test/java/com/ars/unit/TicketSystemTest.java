@@ -8,7 +8,10 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -172,8 +175,6 @@ class TicketSystemTest {
         }
     }
 
-
-
     @Test // TS3: passenger info is invalid
     void testBuyTicketFailsDueToInvalidPassengerInfo() {
         try (MockedStatic<TicketCollection> mockedTickets = mockStatic(TicketCollection.class)) {
@@ -188,4 +189,141 @@ class TicketSystemTest {
         }
     }
 
+    // Scenario: Flight exists but Airplane.getAirPlaneInfo returns null
+    // Expectation: buyTicket should early-exit and never set passenger or status
+    @Test
+    void testBuyTicketNoAirplaneFound() {
+        try (MockedStatic<TicketCollection> tickets = mockStatic(TicketCollection.class);
+             MockedStatic<FlightCollection> flights = mockStatic(FlightCollection.class);
+             MockedStatic<Airplane> planes = mockStatic(Airplane.class)) {
+
+            tickets.when(() -> TicketCollection.getTicketInfo(2)).thenReturn(mockTicket);
+            when(mockPassenger.getEmail()).thenReturn("a@b.com");
+            when(mockTicket.ticketStatus()).thenReturn(false);
+            when(mockTicket.getFlight()).thenReturn(mockFlight);
+            when(mockFlight.getFlightID()).thenReturn(200);
+            flights.when(() -> FlightCollection.getFlightInfo(200)).thenReturn(mockFlight);
+            when(mockFlight.getAirplane()).thenReturn(mockAirplane);
+            planes.when(() -> Airplane.getAirPlaneInfo(anyInt())).thenReturn(null);
+
+            ticketSystem.buyTicket(2, mockPassenger);
+
+            verify(mockTicket, never()).setPassenger(any());
+            verify(mockTicket, never()).setTicketStatus(anyBoolean());
+        }
+    }
+
+    // Scenario: Ticket exists but FlightCollection.getFlightInfo(flightId) returns null
+    // Expectation: buyTicket should early-exit and never set passenger or status
+    @Test
+    void testBuyTicketNoFlightFound() {
+        try (MockedStatic<TicketCollection> tickets = mockStatic(TicketCollection.class);
+             MockedStatic<FlightCollection> flights = mockStatic(FlightCollection.class)) {
+
+            tickets.when(() -> TicketCollection.getTicketInfo(1)).thenReturn(mockTicket);
+            when(mockPassenger.getEmail()).thenReturn("a@b.com");
+            when(mockTicket.ticketStatus()).thenReturn(false);
+            when(mockTicket.getFlight()).thenReturn(mockFlight);
+            when(mockFlight.getFlightID()).thenReturn(100);
+            flights.when(() -> FlightCollection.getFlightInfo(100)).thenReturn(null);
+
+            ticketSystem.buyTicket(1, mockPassenger);
+
+            verify(mockTicket, never()).setPassenger(any());
+            verify(mockTicket, never()).setTicketStatus(anyBoolean());
+        }
+    }
+
+    // Scenario: Valid VIP ticket booking
+    // Expectation: business seats count is decremented, not economy
+    @Test
+    void testBuyTicketVipDeductsBusinessSeat() {
+        try (MockedStatic<TicketCollection> tickets = mockStatic(TicketCollection.class);
+             MockedStatic<FlightCollection> flights = mockStatic(FlightCollection.class);
+             MockedStatic<Airplane> planes = mockStatic(Airplane.class)) {
+
+            tickets.when(() -> TicketCollection.getTicketInfo(3)).thenReturn(mockTicket);
+            when(mockPassenger.getEmail()).thenReturn("a@b.com");
+            when(mockTicket.ticketStatus()).thenReturn(false);
+            when(mockTicket.getFlight()).thenReturn(mockFlight);
+            when(mockTicket.isClassVip()).thenReturn(true);
+            when(mockFlight.getFlightID()).thenReturn(300);
+            flights.when(() -> FlightCollection.getFlightInfo(300)).thenReturn(mockFlight);
+            when(mockFlight.getAirplane()).thenReturn(mockAirplane);
+            when(mockAirplane.getAirplaneID()).thenReturn(400);
+            planes.when(() -> Airplane.getAirPlaneInfo(400)).thenReturn(mockAirplane);
+            when(mockTicket.getPrice()).thenReturn(500);
+
+            ticketSystem.buyTicket(3, mockPassenger);
+
+            verify(mockAirplane).setBusinessSitsNumber(anyInt());
+            verify(mockAirplane, never()).setEconomySitsNumber(anyInt());
+        }
+    }
+
+    // Scenario: Mixed booked/unbooked tickets in the collection
+    // Expectation: findAvailableTicketForFlight returns the first unbooked one
+    @Test
+    void testFindAvailableTicketForFlight() {
+        Ticket t1 = mock(Ticket.class), t2 = mock(Ticket.class);
+        when(t1.getFlight()).thenReturn(mockFlight);
+        when(mockFlight.getFlightID()).thenReturn(500);
+        when(t1.ticketStatus()).thenReturn(true);
+        when(t2.getFlight()).thenReturn(mockFlight);
+        when(t2.ticketStatus()).thenReturn(false);
+
+        try (MockedStatic<TicketCollection> tickets = mockStatic(TicketCollection.class)) {
+            tickets.when(TicketCollection::getTickets).thenReturn(List.of(t1, t2));
+            Ticket found = ticketSystem.findAvailableTicketForFlight(500);
+            assertSame(t2, found);
+        }
+    }
+
+    // Scenario: No tickets in the collection
+    // Expectation: findAvailableTicketForFlight returns null
+    @Test
+    void testFindAvailableTicketForFlightNotFound() {
+        try (MockedStatic<TicketCollection> tickets = mockStatic(TicketCollection.class)) {
+            tickets.when(TicketCollection::getTickets).thenReturn(List.of());
+            assertNull(ticketSystem.findAvailableTicketForFlight(999));
+        }
+    }
+
+    // Scenario: chooseTicket finds a direct flight
+    // Expectation: buyTicket is called exactly once for that flight
+    @Test
+    void testChooseTicketDirectFlightInvokesBuy() {
+        Passenger p = mock(Passenger.class);
+        Flight direct = mock(Flight.class);
+        when(direct.getFlightID()).thenReturn(600);
+
+        try (MockedStatic<FlightCollection> flights = mockStatic(FlightCollection.class)) {
+            flights.when(() -> FlightCollection.getFlightInfo("X", "Y")).thenReturn(direct);
+
+            TicketSystem spy = spy(ticketSystem);
+            Ticket fake = mock(Ticket.class);
+            doReturn(fake).when(spy).findAvailableTicketForFlight(600);
+            doNothing().when(spy).buyTicket(anyInt(), any());
+
+            spy.chooseTicket("X", "Y", p);
+
+            verify(spy).buyTicket(anyInt(), eq(p));
+        }
+    }
+
+    // Scenario: chooseTicket finds no direct or connecting flight
+    // Expectation: buyTicket is never called
+    @Test
+    void testChooseTicketNoVariantsDoesNothing() {
+        Passenger p = mock(Passenger.class);
+        try (MockedStatic<FlightCollection> flights = mockStatic(FlightCollection.class)) {
+            flights.when(() -> FlightCollection.getFlightInfo("A", "B")).thenReturn(null);
+            flights.when(() -> FlightCollection.getFlightInfo("B")).thenReturn(null);
+
+            TicketSystem spy = spy(ticketSystem);
+            spy.chooseTicket("A", "B", p);
+
+            verify(spy, never()).buyTicket(anyInt(), any());
+        }
+    }
 }
