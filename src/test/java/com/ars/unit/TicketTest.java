@@ -80,8 +80,7 @@ class TicketTest {
         setAge(5);
         assertEquals(56, ticket.getPrice(), "Price should be halved for a child with service tax");
     }
-
-
+    
     @Test
     void testTicketStatus() {
         // Decision table: Checking different ticket status transitions
@@ -90,4 +89,43 @@ class TicketTest {
         ticket.setTicketStatus(true);  // Status = true (booked)
         assertTrue(ticket.ticketStatus(), "Ticket should be booked after status change");
     }
+
+    @Test
+    void testSetFlightSuccessfully() {
+        Flight anotherMockFlight = mock(Flight.class);
+        ticket.setFlight(anotherMockFlight);
+        assertEquals(anotherMockFlight, ticket.getFlight(), "Flight should be set correctly");
+    }
+
+    @Test
+    void testSetClassVipUpdatesCorrectly() {
+        ticket.setClassVip(false);
+        assertFalse(ticket.isClassVip(), "classVip should be false after setting to false");
+
+        ticket.setClassVip(true);
+        assertTrue(ticket.isClassVip(), "classVip should be true after setting to true");
+    }
+
+    @Test
+    void testDefaultConstructorAndSetters() {
+        Ticket defaultTicket = new Ticket();
+        defaultTicket.setTicketId(42);
+        assertEquals(42, defaultTicket.getTicketId(), "Ticket ID should be set correctly");
+    }
+
+    @Test
+    void testToStringIncludesExpectedFields() {
+        Flight mockFlight = mock(Flight.class); // use a new mock
+        Passenger mockPassenger = mock(Passenger.class);
+
+        Ticket ticket = new Ticket(1, 100, mockFlight, true, mockPassenger);
+        ticket.setTicketStatus(true);
+
+        String result = ticket.toString();
+        assertTrue(result.contains("Ticket{"));
+        assertTrue(result.contains("Price="));
+        assertTrue(result.contains("VIP=true"));
+        assertTrue(result.contains("Booked=true"));
+    }
+
 }
