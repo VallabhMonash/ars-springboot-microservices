@@ -33,7 +33,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
         Timestamp connectDateFrom = Timestamp.valueOf("2025-06-01 16:00:00");
         Timestamp connectDateTo = Timestamp.valueOf("2025-06-01 20:00:00");
-        Flight connectingFlight = new Flight(2, "Sydney", "Melbourne", "JL456", "Japan Airlines", flightSchedule, airplane);
+
+        Flight.FlightSchedule flightSchedule2 = new Flight.FlightSchedule(connectDateFrom, connectDateTo);
+
+        Flight connectingFlight = new Flight(2, "Sydney", "Melbourne", "JL456", "Japan Airlines", flightSchedule2, airplane);
 
         ArrayList<Flight> flights = new ArrayList<>();
         flights.add(flight);
