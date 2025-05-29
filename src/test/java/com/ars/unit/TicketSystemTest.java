@@ -117,7 +117,7 @@ class TicketSystemTest {
     }
 
     @Test // fallback to transfer route works correctly
-    public void testChooseTicket_transferSuccess() {
+    void testChooseTicket_transferSuccess() {
         // mock Passenger
         Passenger passenger = mock(Passenger.class);
 

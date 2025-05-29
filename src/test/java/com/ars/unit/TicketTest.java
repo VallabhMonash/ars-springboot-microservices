@@ -21,12 +21,12 @@ class TicketTest {
     private Ticket ticket;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         // Creating a Ticket object
         ticket = new Ticket(1, PRICE, mockFlight, true, mockPassenger);
     }
 
-    public void setAge(int age) {
+    void setAge(int age) {
         when(mockPassenger.getAge()).thenReturn(age);
         ticket.setPrice(PRICE);
     }
