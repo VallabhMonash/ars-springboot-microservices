@@ -1,24 +1,27 @@
 package com.ars.unit;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.Arguments;
 import org.mockito.Mockito;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class FlightTest {
+    private static final Timestamp FROM = Timestamp.valueOf("2025-04-21 10:00:00");
+    private static final Timestamp TO   = Timestamp.valueOf("2025-04-21 12:00:00");
 
     @Test
     void testValidFlightCreation() {
         Airplane airplaneMock = Mockito.mock(Airplane.class);
-        Timestamp from = Timestamp.valueOf("2025-04-21 10:00:00");
-        Timestamp to   = Timestamp.valueOf("2025-04-21 12:00:00");
-
-        // wrap timestamps into FlightSchedule
-        Flight.FlightSchedule schedule = new Flight.FlightSchedule(from, to);
+        Flight.FlightSchedule schedule = new Flight.FlightSchedule(FROM, TO);
 
         Flight flight = new Flight(
                 1,
@@ -29,21 +32,21 @@ class FlightTest {
                 schedule,
                 airplaneMock
         );
+
         assertEquals("Paris", flight.getDepartTo());
     }
 
-    @Test
-    void testEmptyDepartTo() {
+    @ParameterizedTest(name = "invalid departTo=''{0}'', departFrom=''{1}''")
+    @MethodSource("invalidDepartArguments")
+    void testInvalidDepartParameters(String departTo, String departFrom) {
         Airplane airplaneMock = Mockito.mock(Airplane.class);
-        Timestamp from = Timestamp.valueOf("2025-04-21 10:00:00");
-        Timestamp to   = Timestamp.valueOf("2025-04-21 12:00:00");
-        Flight.FlightSchedule schedule = new Flight.FlightSchedule(from, to);
+        Flight.FlightSchedule schedule = new Flight.FlightSchedule(FROM, TO);
 
         assertThrows(IllegalArgumentException.class, () -> {
             new Flight(
                     1,
-                    "",
-                    "London",
+                    departTo,
+                    departFrom,
                     "AF123",
                     "AirFrance",
                     schedule,
@@ -52,81 +55,25 @@ class FlightTest {
         });
     }
 
-    @Test
-    void testNullDepartTo() {
-        Airplane airplaneMock = Mockito.mock(Airplane.class);
-        Timestamp from = Timestamp.valueOf("2025-04-21 10:00:00");
-        Timestamp to   = Timestamp.valueOf("2025-04-21 12:00:00");
-        Flight.FlightSchedule schedule = new Flight.FlightSchedule(from, to);
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Flight(
-                    1,
-                    null,
-                    "London",
-                    "AF123",
-                    "AirFrance",
-                    schedule,
-                    airplaneMock
-            );
-        });
+    static Stream<Arguments> invalidDepartArguments() {
+        return Stream.of(
+                Arguments.of("", "London"),
+                Arguments.of((String) null, "London"),
+                Arguments.of("Paris", ""),
+                Arguments.of("Paris", null)
+        );
     }
 
     @Test
-    void testEmptyDepartFrom() {
-        Airplane airplaneMock = Mockito.mock(Airplane.class);
-        Timestamp from = Timestamp.valueOf("2025-04-21 10:00:00");
-        Timestamp to   = Timestamp.valueOf("2025-04-21 12:00:00");
-        Flight.FlightSchedule schedule = new Flight.FlightSchedule(from, to);
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Flight(
-                    1,
-                    "Paris",
-                    "",
-                    "AF123",
-                    "AirFrance",
-                    schedule,
-                    airplaneMock
-            );
-        });
-    }
-
-    @Test
-    void testNullDepartFrom() {
-        Airplane airplaneMock = Mockito.mock(Airplane.class);
-        Timestamp from = Timestamp.valueOf("2025-04-21 10:00:00");
-        Timestamp to   = Timestamp.valueOf("2025-04-21 12:00:00");
-        Flight.FlightSchedule schedule = new Flight.FlightSchedule(from, to);
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Flight(
-                    1,
-                    "Paris",
-                    null,
-                    "AF123",
-                    "AirFrance",
-                    schedule,
-                    airplaneMock
-            );
-        });
-    }
-
-    @Test
-    void testInvalidDateRange() {
-        Airplane airplaneMock = Mockito.mock(Airplane.class);
-        Timestamp from = Timestamp.valueOf("2025-04-21 14:00:00");
-        Timestamp to   = Timestamp.valueOf("2025-04-21 12:00:00");
-        // schedule constructor will throw for invalid range
-        assertThrows(IllegalArgumentException.class, () -> new Flight.FlightSchedule(from, to));
+    void testInvalidDateRangeInSchedule() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Flight.FlightSchedule(TO, FROM)
+        );
     }
 
     @Test
     void testNullAirplane() {
-        Timestamp from = Timestamp.valueOf("2025-04-21 10:00:00");
-        Timestamp to   = Timestamp.valueOf("2025-04-21 12:00:00");
-        Flight.FlightSchedule schedule = new Flight.FlightSchedule(from, to);
-
+        Flight.FlightSchedule schedule = new Flight.FlightSchedule(FROM, TO);
         assertThrows(IllegalArgumentException.class, () -> {
             new Flight(
                     1,
@@ -143,37 +90,14 @@ class FlightTest {
     @Test
     void testDuplicateFlightInsertion() {
         Airplane airplaneMock = Mockito.mock(Airplane.class);
-        Timestamp from = Timestamp.valueOf("2025-04-21 10:00:00");
-        Timestamp to   = Timestamp.valueOf("2025-04-21 12:00:00");
-        Flight.FlightSchedule schedule = new Flight.FlightSchedule(from, to);
-
-        Flight flight1 = new Flight(
-                1,
-                "Paris",
-                "London",
-                "AF123",
-                "AirFrance",
-                schedule,
-                airplaneMock
-        );
-        Flight flight2 = new Flight(
-                2,
-                "Paris",
-                "London",
-                "AF123",
-                "AirFrance",
-                schedule,
-                airplaneMock
-        );
+        Flight.FlightSchedule schedule = new Flight.FlightSchedule(FROM, TO);
+        Flight flight1 = new Flight(1, "Paris", "London", "AF123", "AirFrance", schedule, airplaneMock);
+        Flight flight2 = new Flight(2, "Paris", "London", "AF123", "AirFrance", schedule, airplaneMock);
 
         FlightCollection.flights = new ArrayList<>();
         FlightCollection.flights.add(flight1);
 
-        ArrayList<Flight> newFlights = new ArrayList<>();
-        newFlights.add(flight2);
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            FlightCollection.addFlights(newFlights);
-        });
+        List<Flight> newFlights = Arrays.asList(flight2);
+        assertThrows(IllegalArgumentException.class, () -> FlightCollection.addFlights(newFlights));
     }
 }
