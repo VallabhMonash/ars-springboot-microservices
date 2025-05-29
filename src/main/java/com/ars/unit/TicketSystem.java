@@ -56,49 +56,38 @@ public class TicketSystem {
     }
 
     public void chooseTicket(String city1, String city2, Passenger passenger) {
-        Flight flight = FlightCollection.getFlightInfo(city1, city2);
-
-        if (flight != null) {
-            // If there is a direct flight, find an unbooked ticket on a direct flight
-            Ticket ticket = findAvailableTicketForFlight(flight.getFlightID());
+        // 1) Try direct flight
+        Flight direct = FlightCollection.getFlightInfo(city1, city2);
+        if (direct != null) {
+            Ticket ticket = findAvailableTicketForFlight(direct.getFlightID());
             if (ticket != null) {
                 buyTicket(ticket.getTicketId(), passenger);
             } else {
                 logger.log(Level.INFO, "No available tickets for direct flight.");
             }
-        } else {
-            int counter = 0;
+            return;
+        }
 
-            // No direct flight, find a connecting flight
-            Flight departTo = FlightCollection.getFlightInfo(city2);
-
-            if (departTo != null) {
-                String connectCity = departTo.getDepartFrom();
-
-                Flight flightConnectingTwoCities = FlightCollection.getFlightInfo(city1, connectCity);
-
-                if (flightConnectingTwoCities != null) {
-                    System.out.println("There is special way to go there. And it is transfer way, like above. Way №" + counter);
-
-                    Ticket firstTicket = findAvailableTicketForFlight(departTo.getFlightID());
-                    Ticket secondTicket = findAvailableTicketForFlight(flightConnectingTwoCities.getFlightID());
-
-                    if (firstTicket != null && secondTicket != null) {
-                        buyTicket(firstTicket.getTicketId(), passenger);
-                        buyTicket(secondTicket.getTicketId(), passenger);
-                    } else {
-                        System.out.println("No available tickets for transfer flights.");
-                    }
-
-                    counter++;
+        // 2) Try connecting flight via an intermediate city
+        Flight secondLeg = FlightCollection.getFlightInfo(city2);
+        if (secondLeg != null) {
+            String transferCity = secondLeg.getDepartFrom();
+            Flight firstLeg = FlightCollection.getFlightInfo(city1, transferCity);
+            if (firstLeg != null) {
+                Ticket t1 = findAvailableTicketForFlight(firstLeg.getFlightID());
+                Ticket t2 = findAvailableTicketForFlight(secondLeg.getFlightID());
+                if (t1 != null && t2 != null) {
+                    buyTicket(t1.getTicketId(), passenger);
+                    buyTicket(t2.getTicketId(), passenger);
+                } else {
+                    logger.log(Level.INFO, "No available tickets for transfer flights.");
                 }
-            }
-
-            if (counter == 0) {
-                logger.log(Level.WARNING, "There is no possible variants.");
                 return;
             }
         }
+
+        // 3) No option found
+        logger.log(Level.WARNING, "There is no possible variants.");
     }
 
     public Ticket findAvailableTicketForFlight(int flightId) {
