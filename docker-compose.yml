@@ -1,0 +1,29 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  flight-service:
+    build:
+      context: .
+      dockerfile: flight-service/Dockerfile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - rabbitmq
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  ticket-service:
+    build:
+      context: .
+      dockerfile: ticket-service/Dockerfile
+    ports:
+      - "8082:8082"
+    depends_on:
+      - rabbitmq
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
